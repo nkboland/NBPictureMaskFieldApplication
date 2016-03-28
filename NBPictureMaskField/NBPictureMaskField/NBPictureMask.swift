@@ -436,9 +436,12 @@ class NBPictureMask {
     var n = 0
     while i < text.count && n < tree.count {
 
+
+      //--------------------
+
       switch tree[n].type {
 
-        //--------------------
+      //--------------------
 
       case .Digit :
 
@@ -450,6 +453,8 @@ class NBPictureMask {
           return( i, .NotGood, "No match")
         }
 
+      //--------------------
+
       case .Letter :
 
         if isLetter( text[i] ) {
@@ -459,6 +464,8 @@ class NBPictureMask {
         } else {
           return( i, .NotGood, "No match")
         }
+
+      //--------------------
 
       case .LetterToUpper :
 
@@ -470,6 +477,8 @@ class NBPictureMask {
           return( i, .NotGood, "No match")
         }
 
+      //--------------------
+
       case .LetterToLower :
 
         if isLetter( text[i] ) {
@@ -480,17 +489,23 @@ class NBPictureMask {
           return( i, .NotGood, "No match")
         }
 
+      //--------------------
+
       case .AnyChar :
 
         i += 1
         n += 1
         continue
 
+      //--------------------
+
       case .AnyCharToUpper :
 
         i += 1
         n += 1
         continue
+
+      //--------------------
 
       case .Literal :
 
@@ -502,6 +517,8 @@ class NBPictureMask {
           return( i, .NotGood, "No match")
         }
 
+      //--------------------
+
       case .Repeat :
 
         var retVal : CheckResult
@@ -509,10 +526,12 @@ class NBPictureMask {
         repeat {
 
           retVal = check(text, index: i, tree: tree[n].nodes)
-          NSLog("\(retVal)")
+          NSLog("Repeat \(retVal)")
+
+          switch retVal.status {
 
           // If everything matched then go with that
-          if retVal.status == .Match {
+          case .Match :
             // Only return if number of repetitions can be anthing
             if tree[n].repCount == 0 {
               return( retVal.index, retVal.status, retVal.errMsg)
@@ -520,10 +539,10 @@ class NBPictureMask {
             i = retVal.index
 
           // If index advanced then something matched up to that point
-          } else if retVal.index > i {
+          case .OkSoFar :
             i = retVal.index
 
-          } else {
+          case .NotGood :
             return( retVal.index, retVal.status, retVal.errMsg)
           }
 
@@ -539,6 +558,80 @@ class NBPictureMask {
         n += 1
         continue
 
+      //--------------------
+
+      case .Optional :
+
+        let retVal = check(text, index: i, tree: tree[n].nodes)
+        NSLog("Optional: \(retVal)")
+
+        switch retVal.status {
+
+        // If everything matched then go with that
+        case .Match :
+
+          return( retVal.index, retVal.status, retVal.errMsg)
+
+        // If index advanced then something matched up to that point
+        case .OkSoFar :
+
+          i = retVal.index
+
+        case .NotGood :
+          return( retVal.index, retVal.status, retVal.errMsg)
+        }
+
+        // If we make it to the end then result is most recent outcome
+        if retVal.status == .NotGood {
+          return( retVal.index, retVal.status, retVal.errMsg)
+        }
+
+        n += 1
+        continue
+
+      //--------------------
+
+      case .Grouping :
+
+        var retVal : CheckResult
+
+        for node in tree[n].nodes {
+
+// NOTE - I need to create a function that checks "node" and subtrees
+
+          retVal = check(text, index: i, tree: node.nodes)
+          NSLog("Group: \(retVal)")
+
+          switch retVal.status {
+
+          // If everything matched then go with that
+          case .Match :
+
+            return( retVal.index, retVal.status, retVal.errMsg)
+
+          // If index advanced then something matched up to that point
+          case .OkSoFar :
+
+            i = retVal.index
+
+          case .NotGood :
+            return( retVal.index, retVal.status, retVal.errMsg)
+          }
+
+        }
+
+/*
+        // If we make it to the end then result is most recent outcome
+        if retVal.status == .NotGood {
+          return( retVal.index, retVal.status, retVal.errMsg)
+        }
+*/
+
+        n += 1
+        continue
+
+      //--------------------
+
       default :
 
         i += 1
@@ -546,6 +639,27 @@ class NBPictureMask {
         continue
       }
     }
+
+    //--------------------
+    // Finished with text but there is mask remaining.
+    // This might be ok if it is completely optional
+
+    while i == text.count && n < tree.count {
+
+      switch tree[n].type {
+      case .Optional :
+
+        n += 1
+
+      default :
+
+        return( i, .NotGood, "No match")
+
+      }
+    }
+
+    //--------------------
+    // Final determination
 
     if i == text.count && n == tree.count {
       return( i, .Match, nil)
