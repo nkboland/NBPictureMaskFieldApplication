@@ -12,7 +12,9 @@
 		01BC3BEF1CA82B290074BC38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BED1CA82B290074BC38 /* Main.storyboard */; };
 		01BC3BF11CA82B290074BC38 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BF01CA82B290074BC38 /* Assets.xcassets */; };
 		01BC3BF41CA82B290074BC38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BF21CA82B290074BC38 /* LaunchScreen.storyboard */; };
-		01BC3BFF1CA82B2A0074BC38 /* NBPictureMaskFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3BFE1CA82B2A0074BC38 /* NBPictureMaskFieldTests.swift */; };
+		01BC3C0C1CA82B5F0074BC38 /* NBPictureMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0A1CA82B5F0074BC38 /* NBPictureMask.swift */; };
+		01BC3C0D1CA82B5F0074BC38 /* NBPictureMaskField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0B1CA82B5F0074BC38 /* NBPictureMaskField.swift */; };
+		01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,8 +36,10 @@
 		01BC3BF31CA82B290074BC38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		01BC3BF51CA82B290074BC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01BC3BFA1CA82B2A0074BC38 /* NBPictureMaskFieldTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NBPictureMaskFieldTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		01BC3BFE1CA82B2A0074BC38 /* NBPictureMaskFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NBPictureMaskFieldTests.swift; sourceTree = "<group>"; };
 		01BC3C001CA82B2A0074BC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01BC3C0A1CA82B5F0074BC38 /* NBPictureMask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMask.swift; sourceTree = "<group>"; };
+		01BC3C0B1CA82B5F0074BC38 /* NBPictureMaskField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskField.swift; sourceTree = "<group>"; };
+		01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 				01BC3BF01CA82B290074BC38 /* Assets.xcassets */,
 				01BC3BF21CA82B290074BC38 /* LaunchScreen.storyboard */,
 				01BC3BF51CA82B290074BC38 /* Info.plist */,
+				01BC3C091CA82B5F0074BC38 /* NBPictureMaskField */,
 			);
 			path = NBPictureMaskField;
 			sourceTree = "<group>";
@@ -90,10 +95,19 @@
 		01BC3BFD1CA82B2A0074BC38 /* NBPictureMaskFieldTests */ = {
 			isa = PBXGroup;
 			children = (
-				01BC3BFE1CA82B2A0074BC38 /* NBPictureMaskFieldTests.swift */,
+				01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */,
 				01BC3C001CA82B2A0074BC38 /* Info.plist */,
 			);
 			path = NBPictureMaskFieldTests;
+			sourceTree = "<group>";
+		};
+		01BC3C091CA82B5F0074BC38 /* NBPictureMaskField */ = {
+			isa = PBXGroup;
+			children = (
+				01BC3C0A1CA82B5F0074BC38 /* NBPictureMask.swift */,
+				01BC3C0B1CA82B5F0074BC38 /* NBPictureMaskField.swift */,
+			);
+			path = NBPictureMaskField;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,6 +160,7 @@
 				TargetAttributes = {
 					01BC3BE51CA82B290074BC38 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 8E5E92NZS7;
 					};
 					01BC3BF91CA82B2A0074BC38 = {
 						CreatedOnToolsVersion = 7.3;
@@ -199,6 +214,8 @@
 			files = (
 				01BC3BEC1CA82B290074BC38 /* ViewController.swift in Sources */,
 				01BC3BEA1CA82B290074BC38 /* AppDelegate.swift in Sources */,
+				01BC3C0C1CA82B5F0074BC38 /* NBPictureMask.swift in Sources */,
+				01BC3C0D1CA82B5F0074BC38 /* NBPictureMaskField.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01BC3BFF1CA82B2A0074BC38 /* NBPictureMaskFieldTests.swift in Sources */,
+				01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +346,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = NBPictureMaskField/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nickboland.NBPictureMaskField;
@@ -340,6 +358,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = NBPictureMaskField/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nickboland.NBPictureMaskField;
