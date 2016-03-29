@@ -59,7 +59,6 @@ class NBPictureMask {
   // A node must be one of these types.
 
     case
-      Unknown,
       Repeat,                                 //  *  Repeat any number of times - Example: *& or *3#
       Optional,                               //  [  Optional sequence of characters - Example: [abc]
       OptionalEnd,                            //  ]  Ends sequence of optional
@@ -78,7 +77,7 @@ class NBPictureMask {
   struct Node {
   //----------------------------------------------------------------------------
 
-    var type : NodeType = .Unknown            // Node type indicates how it should be handled
+    var type : NodeType = .Grouping           // Node type indicates how it should be handled
     var repCount : Int = 0                    // Repetion count
     var literal : Character = " "             // Literal character
     var nodes : [Node] = [Node]()             // Child nodes (branches)
@@ -101,7 +100,7 @@ class NBPictureMask {
   var localMask = String()
   var text = String()
 
-  var treeRoot = [Node]()             // Primary parsed tree
+  var rootNode = Node()                       // Primary node
 
 
   var mask: String {
@@ -162,26 +161,27 @@ class NBPictureMask {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
-    parseMask( Array(mask.characters), treeRoot: &treeRoot )
+    NSLog("PARSE MASK '\(String(mask))'")
+    rootNode = Node()
+    parseMask( Array(mask.characters), node: &rootNode )
+    NSLog("PARSE MASK FINISHED")
   }
 
-  private func parseMask(mask: [Character], inout treeRoot: [Node]) {
+  private func parseMask(mask: [Character], inout node: Node) {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
-    treeRoot = [Node]()
     var i = 0
     while i < mask.count {
-      let retVal = parseMask(mask, index: i, tree: &treeRoot)
+      let retVal = parseMask(mask, index: i, node: &node)
       i = retVal.index
       if let errMsg = retVal.errMsg {
-        NSLog("PARSING ERROR: Index(\(i)) Message: \(errMsg)")
+        NSLog("PARSE MASK ERROR: Index(\(i)) Message: \(errMsg)")
       }
     }
-    NSLog("PARSING DONE")
   }
 
-  private func parseMask(mask: [Character], index: Int, inout tree: [Node]) -> (index: Int, errMsg: String?) {
+  private func parseMask(mask: [Character], index: Int, inout node: Node) -> (index: Int, errMsg: String?) {
   //----------------------------------------------------------------------------
   // This parses a picture mask. It takes the following inputs:
   //
@@ -207,8 +207,9 @@ class NBPictureMask {
 
     // Look at the current character to see what type it is
 
+    var t : NodeType
+
     var c = mask[i]
-    var t = NodeType.Unknown
 
     switch c {
     case kMask.digit          : t = .Digit
@@ -252,7 +253,7 @@ class NBPictureMask {
 
       n.type = t
       n.literal = c
-      tree.append(n)
+      node.nodes.append(n)
       return (i+1, nil)
 
     //--------------------
@@ -261,7 +262,7 @@ class NBPictureMask {
 
       n.type = .Literal
       n.literal = c
-      tree.append(n)
+      node.nodes.append(n)
       return (i+1, nil)
 
     //--------------------
@@ -286,14 +287,14 @@ class NBPictureMask {
 
       } while NBPictureMask.isDigit(c)
 
-      let retVal = parseMask(mask, index: i, tree: &n.nodes)
+      let retVal = parseMask(mask, index: i, node: &n)
       i = retVal.index
       if retVal.errMsg != nil { return retVal }
 
       n.type = .Repeat
       n.literal = "*"
       n.repCount = Int( numStr ) ?? 0
-      tree.append(n)
+      node.nodes.append(n)
       return (i, nil)
 
     //--------------------
@@ -304,7 +305,7 @@ class NBPictureMask {
       i += 1
 
       repeat {
-        let retVal = parseMask(mask, index: i, tree: &n.nodes)
+        let retVal = parseMask(mask, index: i, node: &n)
         i = retVal.index
         guard i < mask.count else {
           return ( i, "Optional property '\(kMask.optional)' does not have the closing '\(kMask.optionalEnd)' character." )
@@ -315,7 +316,7 @@ class NBPictureMask {
         if mask[i] == kMask.separator {
           n.type = .Optional
           n.literal = kMask.optional
-          tree.append(n)
+          node.nodes.append(n)
           n.nodes = [Node]()
           i += 1
           continue
@@ -324,7 +325,7 @@ class NBPictureMask {
 
       n.type = .Optional
       n.literal = kMask.optional
-      tree.append(n)
+      node.nodes.append(n)
       return (i+1, nil)
 
     //--------------------
@@ -335,7 +336,7 @@ class NBPictureMask {
       i += 1
 
       repeat {
-        let retVal = parseMask(mask, index: i, tree: &n.nodes)
+        let retVal = parseMask(mask, index: i, node: &n)
         i = retVal.index
         guard i < mask.count else {
           return ( i, "Grouping property '\(kMask.grouping)' does not have the closing '\(kMask.groupingEnd)' character." )
@@ -346,7 +347,7 @@ class NBPictureMask {
         if mask[i] == kMask.separator {
           n.type = .Grouping
           n.literal = kMask.grouping
-          tree.append(n)
+          node.nodes.append(n)
           n.nodes = [Node]()
           i += 1
           continue
@@ -355,7 +356,7 @@ class NBPictureMask {
 
       n.type = .Grouping
       n.literal = kMask.grouping
-      tree.append(n)
+      node.nodes.append(n)
       return (i+1, nil)
 
     //--------------------
@@ -371,29 +372,26 @@ class NBPictureMask {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
-    printMaskTree(0, tree: treeRoot)
+    NSLog("MASK TREE '\(localMask)'")
+    printMaskTree(0, node: rootNode)
+    NSLog("MASK TREE FINISHED")
   }
 
-  private func printMaskTree(index: Int, tree: [Node]) {
+  private func printMaskTree(index: Int, node: Node) {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
     var pad = ""
     for _ in 0..<index { pad += "  " }
 
-    var n = 0
-    while n < tree.count {
-      let t = tree[n]
-      NSLog("\(pad)\(t.literal) \(t.type)")
-
-      switch t.type {
+    for n in node.nodes {
+      NSLog("\(pad)\(n.literal) \(n.type)")
+      switch n.type {
       case .Repeat, .Optional, .Grouping :
-        printMaskTree(1, tree: t.nodes)
+        printMaskTree(index+1, node: n)
       default :
         break
       }
-
-      n += 1
     }
   }
 
@@ -403,22 +401,22 @@ class NBPictureMask {
 
     let tc = text.characters
     NSLog("CHECK Mask: '\(mask)' Text: '\(String(tc))'")
-    let retVal = NBPictureMask.check(Array(tc), index: 0, tree: treeRoot)
+    let retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode)
 
     switch retVal.status {
     case .NotGood :
-      NSLog("BAD  Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
+      NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
       return (index: retVal.index, status: .NotGood, errMsg: retVal.errMsg)
     case .OkSoFar :
-      NSLog("BAD SO FAR Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
+      NSLog("OK SO FAR - Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
       return (index: retVal.index, status: .NotGood, errMsg: retVal.errMsg)
     case .Match :
-      NSLog("GOOD Mask: '\(mask)' Text: '\(String(tc))'")
+      NSLog("MATCH - Mask: '\(mask)' Text: '\(String(tc))'")
       return (index: retVal.index, status: .Match, errMsg: nil)
     }
   }
 
-  class func check(text: [Character], index: Int, tree: [Node]) -> CheckResult {
+  class func check(text: [Character], index: Int, node: Node) -> CheckResult {
   //----------------------------------------------------------------------------
   // This checks the text against the picture mask (tree). It takes the following inputs:
   //
@@ -433,122 +431,110 @@ class NBPictureMask {
   //    errMsg  nil if everything is ok otherwise an isOk    True
 
     var i = index
-    var n = 0
-    while i < text.count && n < tree.count {
 
+    //--------------------
 
-      //--------------------
+    switch node.type {
 
-      switch tree[n].type {
+    //--------------------
 
-      //--------------------
+    case .Digit :
 
-      case .Digit :
+      if isDigit( text[i] ) {
+        return( i+1, .Match, nil)
+      } else {
+        return( i, .NotGood, "Not a digit")
+      }
 
-        if isDigit( text[i] ) {
-          i += 1
-          n += 1
-          continue
-        } else {
-          return( i, .NotGood, "No match")
-        }
+    //--------------------
 
-      //--------------------
+    case .Letter :
 
-      case .Letter :
+      if isLetter( text[i] ) {
+        return( i+1, .Match, nil)
+      } else {
+        return( i, .NotGood, "Not a letter")
+      }
 
-        if isLetter( text[i] ) {
-          i += 1
-          n += 1
-          continue
-        } else {
-          return( i, .NotGood, "No match")
-        }
+    //--------------------
 
-      //--------------------
+    case .LetterToUpper :
 
-      case .LetterToUpper :
+      if isLetter( text[i] ) {
+        return( i+1, .Match, nil)
+      } else {
+        return( i, .NotGood, "Not a letter")
+      }
 
-        if isLetter( text[i] ) {
-          i += 1
-          n += 1
-          continue
-        } else {
-          return( i, .NotGood, "No match")
-        }
+    //--------------------
 
-      //--------------------
+    case .LetterToLower :
 
-      case .LetterToLower :
+      if isLetter( text[i] ) {
+        return( i+1, .Match, nil)
+      } else {
+        return( i, .NotGood, "Not a letter")
+      }
 
-        if isLetter( text[i] ) {
-          i += 1
-          n += 1
-          continue
-        } else {
-          return( i, .NotGood, "No match")
-        }
+    //--------------------
 
-      //--------------------
+    case .AnyChar :
 
-      case .AnyChar :
+      return( i+1, .Match, nil)
 
-        i += 1
-        n += 1
-        continue
+    //--------------------
 
-      //--------------------
+    case .AnyCharToUpper :
 
-      case .AnyCharToUpper :
+      return( i+1, .Match, nil)
 
-        i += 1
-        n += 1
-        continue
+    //--------------------
 
-      //--------------------
+    case .Literal :
 
-      case .Literal :
+      if text[i] == node.literal {
+        return( i+1, .Match, nil)
+      } else {
+        return( i, .NotGood, "Not a match")
+      }
 
-        if text[i] == tree[n].literal {
-          i += 1
-          n += 1
-          continue
-        } else {
-          return( i, .NotGood, "No match")
-        }
+    //--------------------
 
-      //--------------------
+    case .Repeat :
 
-      case .Repeat :
+      var retVal : CheckResult
 
-        var retVal : CheckResult
+      var n = 0   // Normally just one node
+      while i < text.count && n < node.nodes.count {
+
         var cnt = 0
         repeat {
 
-          retVal = check(text, index: i, tree: tree[n].nodes)
+          if i == text.count {
+            if node.repCount == 0 {
+              return(i, .Match, nil)    // Repeat matched to the end of the input
+            } else {
+              return(i, .NotGood, "Repeat is longer than the input")
+            }
+          }
+
+          retVal = check(text, index: i, node: node.nodes[n])
           NSLog("Repeat \(retVal)")
 
           switch retVal.status {
-
           // If everything matched then go with that
           case .Match :
-            // Only return if number of repetitions can be anthing
-            if tree[n].repCount == 0 {
-              return( retVal.index, retVal.status, retVal.errMsg)
-            }
             i = retVal.index
-
           // If index advanced then something matched up to that point
           case .OkSoFar :
             i = retVal.index
-
           case .NotGood :
             return( retVal.index, retVal.status, retVal.errMsg)
           }
 
           cnt += 1
 
-        } while cnt < tree[n].repCount || tree[n].repCount == 0
+        } while cnt < node.repCount || node.repCount == 0
 
         // If we make it to the end then result is most recent outcome
         if retVal.status == .NotGood {
@@ -556,13 +542,28 @@ class NBPictureMask {
         }
 
         n += 1
-        continue
+      }
+
+      //--------------------
+      // Final determination
+
+      if i == text.count && n == node.nodes.count {
+        return( i, .Match, nil)
+      } else if i < text.count && n == node.nodes.count {
+        return( i, .OkSoFar, nil)
+      } else {
+        return( i, .NotGood, "No match")
+      }
 
       //--------------------
 
-      case .Optional :
+    case .Optional :
 
-        let retVal = check(text, index: i, tree: tree[n].nodes)
+      var retVal : CheckResult
+
+      for n in node.nodes {
+
+        retVal = check(text, index: i, node: n)
         NSLog("Optional: \(retVal)")
 
         switch retVal.status {
@@ -586,88 +587,79 @@ class NBPictureMask {
           return( retVal.index, retVal.status, retVal.errMsg)
         }
 
-        n += 1
-        continue
+      }
+
+      return( i, .NotGood, "Optional failed")
 
       //--------------------
 
-      case .Grouping :
+    case .Grouping :
 
-        var retVal : CheckResult
+      var n = 0
+      while i < text.count && n < node.nodes.count {
 
-        for node in tree[n].nodes {
+        // NOTE - I need to create a function that checks "node" and subtrees
 
-// NOTE - I need to create a function that checks "node" and subtrees
+        let retVal = check(text, index: i, node: node.nodes[n])
+        NSLog("Group: \(retVal)")
 
-          retVal = check(text, index: i, tree: node.nodes)
-          NSLog("Group: \(retVal)")
+        switch retVal.status {
 
-          switch retVal.status {
+        // If everything matched then go with that
+        case .Match :
 
-          // If everything matched then go with that
-          case .Match :
+          i = retVal.index
 
-            return( retVal.index, retVal.status, retVal.errMsg)
+        // If index advanced then something matched up to that point
+        case .OkSoFar :
 
-          // If index advanced then something matched up to that point
-          case .OkSoFar :
+          i = retVal.index
 
-            i = retVal.index
-
-          case .NotGood :
-            return( retVal.index, retVal.status, retVal.errMsg)
-          }
-
-        }
-
-/*
-        // If we make it to the end then result is most recent outcome
-        if retVal.status == .NotGood {
+        case .NotGood :
           return( retVal.index, retVal.status, retVal.errMsg)
         }
-*/
 
         n += 1
-        continue
+      }
 
       //--------------------
+      // Finished with text but there is mask remaining.
+      // This might be ok if it is completely optional
 
-      default :
-
-        i += 1
-        n += 1
-        continue
+      while i == text.count && n < node.nodes.count {
+        switch node.nodes[n].type {
+        case .Optional :
+          n += 1
+        default :
+          return( i, .NotGood, "No match")
+        }
       }
-    }
+      
+      //--------------------
+      // Final determination
 
-    //--------------------
-    // Finished with text but there is mask remaining.
-    // This might be ok if it is completely optional
-
-    while i == text.count && n < tree.count {
-
-      switch tree[n].type {
-      case .Optional :
-
-        n += 1
-
-      default :
-
+      if i == text.count && n == node.nodes.count {
+        return( i, .Match, nil)
+      } else if i < text.count && n == node.nodes.count {
+        return( i, .OkSoFar, nil)
+      } else {
         return( i, .NotGood, "No match")
-
       }
+
+      //--------------------
+      
+    default :
+      
+      var retVal : CheckResult
+
+      for n in node.nodes {
+        retVal = check(text, index: i, node: n)
+        NSLog("Group: \(retVal)")
+      }
+
+      return( i, .NotGood, "Unknown failed")
     }
 
-    //--------------------
-    // Final determination
-
-    if i == text.count && n == tree.count {
-      return( i, .Match, nil)
-    } else if i < text.count && n == tree.count {
-      return( i, .OkSoFar, nil)
-    } else {
-      return( i, .NotGood, "No match")
-    }
   }
 
 }
