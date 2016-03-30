@@ -25,6 +25,23 @@
 //
 //  Template -  This is used to fill in the mask for displaying.
 //
+//  Optional Algorithm
+//  ------------------
+//
+//  1. Each optional node is given a unique number 0 .. n-1
+//  2. The text is checked against all possible combination of optionals.
+//  3. This is done by "enabling" and "disabling" each optional.
+//
+//  For example, if there are two optionals then there are four possible
+//  combinations:
+//
+//  Optional:  0    1    Sequence
+//            ---  ---   --------
+//             No   No       0
+//             No  Yes       1
+//            Yes   No       2
+//            Yes  Yes       3
+//
 //==============================================================================
 
 import Foundation
@@ -77,10 +94,10 @@ class NBPictureMask {
   struct Node {
   //----------------------------------------------------------------------------
 
-    var type : NodeType = .Grouping           // Node type indicates how it should be handled
-    var repCount : Int = 0                    // Repetion count
+    var type    : NodeType = .Grouping        // Node type indicates how it should be handled
+    var value   : Int = 0                     // Repeat (count), Optional(number)
     var literal : Character = " "             // Literal character
-    var nodes : [Node] = [Node]()             // Child nodes (branches)
+    var nodes   : [Node] = [Node]()           // Child nodes (branches)
    }
 
   enum MatchStatus {
@@ -157,6 +174,12 @@ class NBPictureMask {
     }
   }
 
+  class func lastDot( s : String ) -> String {
+  //----------------------------------------------------------------------------
+  // Returns last element of a string separated by dots (period).
+    return s.componentsSeparatedByString(".").last ?? "unknown"
+  }
+
   private func parseMask(mask: String) {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
@@ -179,6 +202,7 @@ class NBPictureMask {
         NSLog("PARSE MASK ERROR: Index(\(i)) Message: \(errMsg)")
       }
     }
+    node.value = optCnt
     NSLog("PARSE MASK FINISHED with \(optCnt) optionals")
   }
 
@@ -325,7 +349,7 @@ class NBPictureMask {
 
       n.type = .Repeat
       n.literal = "*"
-      n.repCount = Int( numStr ) ?? 0
+      n.value = Int( numStr ) ?? 0
       node.nodes.append(n)
       return (i, nil)
 
@@ -336,7 +360,7 @@ class NBPictureMask {
 
       n.type = .Optional
       n.literal = kMask.optional
-      n.repCount = optCnt
+      n.value = optCnt
       optCnt += 1
 
       i += 1
@@ -389,7 +413,7 @@ class NBPictureMask {
     for _ in 0..<index { pad += "  " }
 
     for n in node.nodes {
-      NSLog("\(pad)\(n.literal) \(n.type)")
+      NSLog("\(pad)\(n.literal) \(NBPictureMask.lastDot(String(n.type))) \(n.value)")
       switch n.type {
       case .Repeat, .Optional, .Grouping :
         printMaskTree(index+1, node: n)
@@ -404,30 +428,33 @@ class NBPictureMask {
   // Check the text against the mask.
 
     let tc = text.characters
-    NSLog("CHECK Mask: '\(mask)' Text: '\(String(tc))'")
+    NSLog("CHECK Mask: '\(mask)' Text: '\(String(tc))' with \(rootNode.value) optionals")
 
-    let retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode)
+    var retVal : CheckResult
 
-    switch retVal.status {
-    case .NotGood :
-      NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
-      return (index: retVal.index, status: .NotGood, errMsg: retVal.errMsg)
-    case .OkSoFar :
-      NSLog("OK SO FAR - Mask: '\(mask)' Text: '\(String(tc))' Index: \(retVal.index) Message: \(retVal.errMsg)")
-      return (index: retVal.index, status: .NotGood, errMsg: retVal.errMsg)
-    case .Match :
-      NSLog("MATCH - Mask: '\(mask)' Text: '\(String(tc))'")
-      return (index: retVal.index, status: .Match, errMsg: nil)
+    let optMaxMask = ( 0x01 << rootNode.value ) - 1
+    // Look at all possible combinations of optionals
+    for optMask in 0 ... optMaxMask {
+      retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode, optMask: optMask)
+      if retVal.status == .Match {
+        NSLog("MATCH - Mask: '\(mask)' Text: '\(String(tc))'")
+        return (index: retVal.index, status: .Match, errMsg: nil)
+      }
     }
+
+    // Nothing matched
+    NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))'")
+    return (index: 0, status: .NotGood, errMsg: "No match")
   }
 
-  class func check(text: [Character], index: Int, node: Node) -> CheckResult {
+  class func check(text: [Character], index: Int, node: Node, optMask: Int) -> CheckResult {
   //----------------------------------------------------------------------------
   // This checks the text against the picture mask (tree). It takes the following inputs:
   //
   //    text    Text being checked
   //    index   Index into the mask currently being examined
-  //    tree    Array of nodes representing the mask
+  //    node    Node in mask to be used for checking the text at index
+  //    optCnt  Optional counter that tells us which optionals to use or ignore
   //
   // It returns the following:
   //
@@ -512,8 +539,8 @@ class NBPictureMask {
 
         // NOTE - I need to create a function that checks "node" and subtrees
 
-        let retVal = check(text, index: i, node: node.nodes[n])
-        NSLog("Group: \(retVal)")
+        let retVal = check(text, index: i, node: node.nodes[n], optMask: optMask)
+        NSLog("Group - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
 
         switch retVal.status {
 
@@ -571,15 +598,15 @@ class NBPictureMask {
         repeat {
 
           if i == text.count {
-            if node.repCount == 0 {
+            if node.value == 0 {
               return(i, .Match, nil)    // Repeat matched to the end of the input
             } else {
               return(i, .NotGood, "Repeat is longer than the input")
             }
           }
 
-          retVal = check(text, index: i, node: node.nodes[n])
-          NSLog("Repeat \(retVal)")
+          retVal = check(text, index: i, node: node.nodes[n], optMask: optMask)
+          NSLog("Repeat - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
 
           switch retVal.status {
           // If everything matched then go with that
@@ -594,7 +621,7 @@ class NBPictureMask {
 
           cnt += 1
 
-        } while cnt < node.repCount || node.repCount == 0
+        } while cnt < node.value || node.value == 0
 
         // If we make it to the end then result is most recent outcome
         if retVal.status == .NotGood {
@@ -616,29 +643,31 @@ class NBPictureMask {
       }
 
     //--------------------
-    // NOTE - will make this same as .Grouping
 
     case .Optional :
+
+      // See if this optional should be checked
+
+      let mask = 0x01 << node.value
+      if ( optMask & mask ) != mask {
+        return(i, .OkSoFar, nil)
+      }
+
+      // Check this optional
 
       var retVal : CheckResult
 
       for n in node.nodes {
 
-        retVal = check(text, index: i, node: n)
-        NSLog("Optional: \(retVal)")
+        retVal = check(text, index: i, node: n, optMask: optMask)
+        NSLog("Optional - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
 
         switch retVal.status {
 
         // If everything matched then go with that
-        case .Match :
-
-          return( retVal.index, retVal.status, retVal.errMsg)
-
-        // If index advanced then something matched up to that point
-        case .OkSoFar :
-
+        case .Match,
+             .OkSoFar :
           i = retVal.index
-
         case .NotGood :
           return( retVal.index, retVal.status, retVal.errMsg)
         }
@@ -650,7 +679,8 @@ class NBPictureMask {
 
       }
 
-      return( i, .NotGood, "Optional failed")
+      // If we make it to the end then it must have been all good
+      return(i, .Match, nil)
 
     //--------------------
       
@@ -659,7 +689,7 @@ class NBPictureMask {
       var retVal : CheckResult
 
       for n in node.nodes {
-        retVal = check(text, index: i, node: n)
+        retVal = check(text, index: i, node: n, optMask: optMask)
         NSLog("Group: \(retVal)")
       }
 
