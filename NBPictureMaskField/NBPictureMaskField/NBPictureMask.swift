@@ -29,7 +29,7 @@
 //  ------------------
 //
 //  1. Each optional node is given a unique number 0 .. n-1
-//  2. The text is checked against all possible combination of optionals.
+//  2. The text input is checked against all possible combination of optionals.
 //  3. This is done by "enabling" and "disabling" each optional.
 //
 //  For example, if there are two optionals then there are four possible
@@ -42,6 +42,15 @@
 //            Yes   No       2
 //            Yes  Yes       3
 //
+//  The algorithm will run through all four sequences until it finds a math.
+//  Otherwise there is no match!
+//
+//  Grouping Algorithm
+//  ------------------
+//
+//  Each group...
+//
+//  The first group to match is the one.
 //==============================================================================
 
 import Foundation
@@ -65,7 +74,7 @@ class NBPictureMask {
     static let optionalEnd    : Character = "]"
     static let grouping       : Character = "{"
     static let groupingEnd    : Character = "}"
-    static let separator      : Character = ","
+    static let group          : Character = ","
   }
 
   //--------------------
@@ -76,25 +85,24 @@ class NBPictureMask {
   // A node must be one of these types.
 
     case
+      Root,                                   //     Root node
       Digit,                                  //  #  Any digit 0..9
       Letter,                                 //  ?  Any letter a..z or A..Z
       LetterToUpper,                          //  &  Any letter a..z or A..Z converted to uppercase
       LetterToLower,                          //  ~  Any letter a..z or A..Z converted to lowercase
       AnyChar,                                //  @  Any character
       AnyCharToUpper,                         //  !  Any character converted to uppercase
-      Escape,                                 //  ;  Escape such that next character is to be used literally
-      Literal,                                //     Literal character
-      Grouping,                               //  {  Grouping - Example: {R,G,B} or {R[ed],G[reen],B[lue]}
-      GroupingEnd,                            //  }  Ends sequence of group
+      Literal,                                //  ;  Literal character
       Repeat,                                 //  *  Repeat any number of times - Example: *& or *3#
-      Optional,                               //  [  Optional sequence of characters - Example: [abc]
-      OptionalEnd                             //  ]  Ends sequence of optional
+      Optional,                               // [ ] Optional sequence of characters - Example: [abc]
+      Grouping,                               // { } Grouping - Example: {R,G,B} or {R[ed],G[reen],B[lue]}
+      Group                                   //  ,  Group - Example: {Group1,Group2}
   }
 
   struct Node {
   //----------------------------------------------------------------------------
 
-    var type    : NodeType = .Grouping        // Node type indicates how it should be handled
+    var type    : NodeType = .Root            // Node type indicates how it should be handled
     var value   : Int = 0                     // Repeat (count), Optional(number)
     var literal : Character = " "             // Literal character
     var nodes   : [Node] = [Node]()           // Child nodes (branches)
@@ -236,31 +244,31 @@ class NBPictureMask {
 
     var c = mask[i]
 
-    switch c {
-    case kMask.digit          : t = .Digit
-    case kMask.letter         : t = .Letter
-    case kMask.letterToUpper  : t = .LetterToUpper
-    case kMask.letterToLower  : t = .LetterToLower
-    case kMask.anyChar        : t = .AnyChar
-    case kMask.anyCharToUpper : t = .AnyCharToUpper
-    case kMask.escape         : t = .Escape
-    case kMask.repetition     : t = .Repeat
-    case kMask.optional       : t = .Optional
-    case kMask.optionalEnd    : t = .OptionalEnd
-    case kMask.grouping       : t = .Grouping
-    case kMask.groupingEnd    : t = .GroupingEnd
-    default                   : t = .Literal
-    }
-
     // Escape takes the next character as a literal
 
-    if t == .Escape {
+    if c == kMask.escape {
       i += 1
       guard i < mask.count else {
         return ( i, "Escape character '\(kMask.escape)' does not have any characters following it." )
       }
       c = mask[i]
       t = .Literal
+
+    } else {
+
+      switch c {
+      case kMask.digit          : t = .Digit
+      case kMask.letter         : t = .Letter
+      case kMask.letterToUpper  : t = .LetterToUpper
+      case kMask.letterToLower  : t = .LetterToLower
+      case kMask.anyChar        : t = .AnyChar
+      case kMask.anyCharToUpper : t = .AnyCharToUpper
+      case kMask.repetition     : t = .Repeat
+      case kMask.optional       : t = .Optional
+      case kMask.grouping       : t = .Grouping
+      default                   : t = .Literal
+      }
+
     }
 
     //--------------------
@@ -291,33 +299,51 @@ class NBPictureMask {
       return (i+1, nil)
 
     //--------------------
+    // Optional [] or [#] or [#,?] or [R,G,B]
+
+    case .Root :
+
+      return (i+1, nil)       // Should never happen
+
+    //--------------------
     // Grouping {} or {#} or {#,?} or {R,G,B}
 
-    case .Grouping :
-
-      i += 1
-
-      repeat {
-        let retVal = parseMask(mask, index: i, node: &n, optCnt: &optCnt)
-        i = retVal.index
-        guard i < mask.count else {
-          return ( i, "Grouping property '\(kMask.grouping)' does not have the closing '\(kMask.groupingEnd)' character." )
-        }
-
-        // Group seperator saves and restarts
-
-        if mask[i] == kMask.separator {
-          n.type = .Grouping
-          n.literal = kMask.grouping
-          node.nodes.append(n)
-          n.nodes = [Node]()
-          i += 1
-          continue
-        }
-      } while mask[i] != kMask.groupingEnd
+    case .Grouping,
+         .Group :
 
       n.type = .Grouping
       n.literal = kMask.grouping
+
+      // Groups
+
+      repeat {
+
+        i += 1
+
+        // Group
+
+        var g = Node()
+
+        repeat {
+
+
+          g.type = .Group
+          g.literal = kMask.group
+
+          let retVal = parseMask(mask, index: i, node: &g, optCnt: &optCnt)
+          i = retVal.index
+
+          guard i < mask.count else {
+            return ( i, "Grouping property '\(kMask.grouping)' does not have the closing '\(kMask.groupingEnd)' character." )
+          }
+
+
+        } while mask[i] != kMask.group && mask[i] != kMask.groupingEnd
+        
+        n.nodes.append(g)
+
+      } while mask[i] == kMask.group
+
       node.nodes.append(n)
       return (i+1, nil)
 
@@ -374,7 +400,7 @@ class NBPictureMask {
 
         // Group seperator saves and restarts
 
-        if mask[i] == kMask.separator {
+        if mask[i] == kMask.group {
           n.type = .Optional
           n.literal = kMask.optional
           node.nodes.append(n)
@@ -386,13 +412,6 @@ class NBPictureMask {
 
       node.nodes.append(n)
       return (i+1, nil)
-
-    //--------------------
-
-    default :
-
-      return (i+1, "Not sure why we got here.")
-
     }
   }
 
@@ -400,9 +419,11 @@ class NBPictureMask {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
+    NSLog("==============================")
     NSLog("MASK TREE '\(localMask)'")
     printMaskTree(0, node: rootNode)
     NSLog("MASK TREE FINISHED")
+    NSLog("==============================")
   }
 
   private func printMaskTree(index: Int, node: Node) {
@@ -413,12 +434,27 @@ class NBPictureMask {
     for _ in 0..<index { pad += "  " }
 
     for n in node.nodes {
-      NSLog("\(pad)\(n.literal) \(NBPictureMask.lastDot(String(n.type))) \(n.value)")
       switch n.type {
-      case .Repeat, .Optional, .Grouping :
-        printMaskTree(index+1, node: n)
-      default :
+      case .Digit,
+           .Letter,
+           .LetterToUpper,
+           .LetterToLower,
+           .AnyChar,
+           .AnyCharToUpper,
+           .Literal :
+        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) \(n.literal)")
+      case .Root :
         break
+      case .Grouping,
+           .Group :
+        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type)))")
+        printMaskTree(index+1, node: n)
+      case .Repeat :
+        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) count \(n.value)")
+        printMaskTree(index+1, node: n)
+      case .Optional :
+        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) level \(n.value)")
+        printMaskTree(index+1, node: n)
       }
     }
   }
@@ -531,33 +567,112 @@ class NBPictureMask {
       }
 
     //--------------------
+    // Root node
+
+    case .Root :
+
+      var n = 0
+      while i < text.count && n < node.nodes.count {
+
+        let retVal = check(text, index: i, node: node.nodes[n], optMask: optMask)
+        NSLog("Root - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
+
+        if retVal.status == .NotGood {
+          return( retVal.index, retVal.status, retVal.errMsg)
+        }
+
+        i = retVal.index
+        n += 1
+      }
+
+      //--------------------
+      // Finished with text but there is mask remaining.
+      // This might be ok if it is completely optional
+
+      while i == text.count && n < node.nodes.count {
+        switch node.nodes[n].type {
+        case .Optional :
+          n += 1
+        default :
+          return( i, .NotGood, "No match")
+        }
+      }
+      
+      //--------------------
+      // Final determination
+
+      if i == text.count && n == node.nodes.count {
+        return( i, .Match, nil)
+      } else if i < text.count && n == node.nodes.count {
+        return( i, .OkSoFar, nil)
+      } else {
+        return( i, .NotGood, "No match")
+      }
+
+    //--------------------
+    // Check all groupings from the same text positon.
+    // The first match wins.
 
     case .Grouping :
 
       var n = 0
       while i < text.count && n < node.nodes.count {
 
-        // NOTE - I need to create a function that checks "node" and subtrees
+        let retVal = check(text, index: i, node: node.nodes[n], optMask: optMask)
+        NSLog("Grouping - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
+
+        // Return on the first match
+
+        switch retVal.status {
+        case .Match,
+             .OkSoFar :
+          return( retVal.index, retVal.status, retVal.errMsg)
+        default :
+          break;
+        }
+
+        n += 1
+      }
+
+      //--------------------
+      // Finished with text but there is mask remaining.
+      // This might be ok if it is completely optional
+
+      while i == text.count && n < node.nodes.count {
+        switch node.nodes[n].type {
+        case .Optional :
+          n += 1
+        default :
+          return( i, .NotGood, "No match")
+        }
+      }
+      
+      //--------------------
+      // Final determination
+
+      if i == text.count && n == node.nodes.count {
+        return( i, .Match, nil)
+      } else if i < text.count && n == node.nodes.count {
+        return( i, .OkSoFar, nil)
+      } else {
+        return( i, .NotGood, "No match")
+      }
+
+    //--------------------
+
+    case .Group :
+
+      var n = 0
+      while i < text.count && n < node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n], optMask: optMask)
         NSLog("Group - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
 
-        switch retVal.status {
-
-        // If everything matched then go with that
-        case .Match :
-
-          i = retVal.index
-
-        // If index advanced then something matched up to that point
-        case .OkSoFar :
-
-          i = retVal.index
-
-        case .NotGood :
+        if retVal.status == .NotGood {
           return( retVal.index, retVal.status, retVal.errMsg)
         }
 
+        i = retVal.index
         n += 1
       }
 
@@ -650,7 +765,7 @@ class NBPictureMask {
 
       let mask = 0x01 << node.value
       if ( optMask & mask ) != mask {
-        return(i, .OkSoFar, nil)
+        return(i, .Match, nil)
       }
 
       // Check this optional
@@ -658,6 +773,10 @@ class NBPictureMask {
       var retVal : CheckResult
 
       for n in node.nodes {
+
+        if i == text.count {
+          return(i, .NotGood, "Did not match optional")
+        }
 
         retVal = check(text, index: i, node: n, optMask: optMask)
         NSLog("Optional - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
@@ -682,18 +801,6 @@ class NBPictureMask {
       // If we make it to the end then it must have been all good
       return(i, .Match, nil)
 
-    //--------------------
-      
-    default :
-      
-      var retVal : CheckResult
-
-      for n in node.nodes {
-        retVal = check(text, index: i, node: n, optMask: optMask)
-        NSLog("Group: \(retVal)")
-      }
-
-      return( i, .NotGood, "Unknown failed")
     }
 
   }
