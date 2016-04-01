@@ -10,6 +10,12 @@ import UIKit
 
 class ViewController: UIViewController {
 
+  let nbPictureMask = NBPictureMask()
+
+  @IBOutlet weak var maskStatusLabel: UILabel!
+  @IBOutlet weak var textStatusLabel: UILabel!
+  @IBOutlet weak var autoFillSwitch: UISwitch!
+
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
@@ -20,6 +26,13 @@ class ViewController: UIViewController {
     // Dispose of any resources that can be recreated.
   }
 
+  @IBAction func maskFieldEditingChanged(sender: AnyObject) {
+    let textField = sender as! UITextField
+    let mask = textField.text ?? ""
+    let retVal = nbPictureMask.parseMask(mask)
+    let errMsg = retVal.errMsg ?? "Mask is valid"
+    maskStatusLabel.text = errMsg
+  }
 
 }
 

@@ -35,6 +35,14 @@
 //  Optional Algorithm
 //  ------------------
 //
+//  TO DO
+//  -----
+//
+//  1. Mask parsing returns status.
+//  2. Auto fill implementation.
+//  3. Text checking error message.
+//  4. Capitalization and text replacement.
+//
 //==============================================================================
 
 import Foundation
@@ -104,16 +112,16 @@ class NBPictureMask {
       Match                                   // It matches
   }
 
+  typealias ParseMaskResult = (index: Int, errMsg: String?)
   typealias CheckResult = (index: Int, status: MatchStatus, errMsg: String?)
 
   //--------------------
   // MARK: - Variables
 
-  var localMask = String()
-  var text = String()
+  private var localMask = String()
+  private var text = String()
 
-  var rootNode = Node()                       // Primary node
-
+  private var rootNode = Node()               // Primary node
 
   var mask: String {
   //----------------------------------------------------------------------------
@@ -175,15 +183,15 @@ class NBPictureMask {
     return s.componentsSeparatedByString(".").last ?? "unknown"
   }
 
-  private func parseMask(mask: String) {
+  func parseMask(mask: String) -> ParseMaskResult {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
     rootNode = Node()
-    parseMask( Array(mask.characters), node: &rootNode )
+    return parseMask( Array(mask.characters), node: &rootNode )
   }
 
-  private func parseMask(mask: [Character], inout node: Node) {
+  private func parseMask(mask: [Character], inout node: Node) -> ParseMaskResult {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
@@ -194,12 +202,14 @@ class NBPictureMask {
       i = retVal.index
       if let errMsg = retVal.errMsg {
         NSLog("PARSE MASK ERROR: Index(\(i)) Message: \(errMsg)")
+        return retVal
       }
     }
     NSLog("PARSE MASK FINISHED")
+    return (0, nil)
   }
 
-  private func parseMask(mask: [Character], index: Int, inout node: Node) -> (index: Int, errMsg: String?) {
+  private func parseMask(mask: [Character], index: Int, inout node: Node) -> ParseMaskResult {
   //----------------------------------------------------------------------------
   // This parses a picture mask. It takes the following inputs:
   //
@@ -236,7 +246,7 @@ class NBPictureMask {
 
       i += 1
       guard i < mask.count else {
-        return ( i, "Escape character '\(kMask.escape)' does not have any characters following it." )
+        return ( i, "Escape is missing characters following it." )
       }
       c = mask[i]
       n.str.append(c)
@@ -306,7 +316,7 @@ class NBPictureMask {
 
         i += 1
         guard i < mask.count else {
-          return ( i, "Repetition property '\(kMask.repetition)\(numStr)' does not have any characters following it." )
+          return ( i, "Repetition is missing characters following it." )
         }
 
         c = mask[i]
@@ -357,7 +367,7 @@ class NBPictureMask {
           i = retVal.index
 
           guard i < mask.count else {
-            return ( i, "Grouping property '\(kMask.grouping)' does not have the closing '\(kMask.groupingEnd)' character." )
+            return ( i, "Grouping is missing '\(kMask.groupingEnd)'." )
           }
 
         } while mask[i] != kMask.group && mask[i] != kMask.groupingEnd
@@ -404,7 +414,7 @@ class NBPictureMask {
           i = retVal.index
 
           guard i < mask.count else {
-            return ( i, "Optional property '\(kMask.optional)' does not have the closing '\(kMask.optionalEnd)' character." )
+            return ( i, "Optional is missing '\(kMask.optionalEnd)'." )
           }
 
         } while mask[i] != kMask.group && mask[i] != kMask.optionalEnd
@@ -429,21 +439,21 @@ class NBPictureMask {
 
     case .GroupingEnd :
 
-      return (i, nil)       // Probably should be a warning
+      return (i, "Grouping is missing '\(kMask.grouping)'.")
 
     //--------------------
     // Group with no body {,#} or [,#]
 
     case .Group :
 
-      return (i, nil)       // Probably should be a warning
+      return (i, "Group '\(kMask.group)' is incomplete.")
 
     //--------------------
     // Optional with no body [#,]
 
     case .OptionalEnd :
 
-      return (i, nil)       // Probably should be a warning
+      return (i, "Optional is missing '\(kMask.optional)'.")
     }
 
   }
