@@ -25,32 +25,16 @@
 //
 //  Template -  This is used to fill in the mask for displaying.
 //
-//  Optional Algorithm
-//  ------------------
-//
-//  1. Each optional node is given a unique number 0 .. n-1
-//  2. The text input is checked against all possible combination of optionals.
-//  3. This is done by "enabling" and "disabling" each optional.
-//
-//  For example, if there are two optionals then there are four possible
-//  combinations:
-//
-//  Optional:  0    1    Sequence
-//            ---  ---   --------
-//             No   No       0
-//             No  Yes       1
-//            Yes   No       2
-//            Yes  Yes       3
-//
-//  The algorithm will run through all four sequences until it finds a math.
-//  Otherwise there is no match!
-//
 //  Grouping Algorithm
 //  ------------------
 //
 //  Each group...
 //
 //  The first group to match is the one.
+//
+//  Optional Algorithm
+//  ------------------
+//
 //==============================================================================
 
 import Foundation
@@ -553,6 +537,8 @@ class NBPictureMask {
 
     case .Digit :
 
+      guard i < text.count else { return( i, .NotGood, "No more digits") }
+
       if isDigit( text[i] ) {
         return( i+1, .Match, nil)
       } else {
@@ -562,6 +548,8 @@ class NBPictureMask {
     //--------------------
 
     case .Letter :
+
+      guard i < text.count else { return( i, .NotGood, "No more letters") }
 
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
@@ -573,6 +561,8 @@ class NBPictureMask {
 
     case .LetterToUpper :
 
+      guard i < text.count else { return( i, .NotGood, "No more letters to upper") }
+
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
       } else {
@@ -582,6 +572,8 @@ class NBPictureMask {
     //--------------------
 
     case .LetterToLower :
+
+      guard i < text.count else { return( i, .NotGood, "No more letters to lower") }
 
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
@@ -593,17 +585,23 @@ class NBPictureMask {
 
     case .AnyChar :
 
+      guard i < text.count else { return( i, .NotGood, "No more any characters") }
+
       return( i+1, .Match, nil)
 
     //--------------------
 
     case .AnyCharToUpper :
 
+      guard i < text.count else { return( i, .NotGood, "No more any characters to upper") }
+
       return( i+1, .Match, nil)
 
     //--------------------
 
     case .Literal :
+
+      guard i < text.count else { return( i, .NotGood, "No more literal characters") }
 
       if text[i] == node.literal {
         return( i+1, .Match, nil)
@@ -616,8 +614,7 @@ class NBPictureMask {
 
     case .Root :
 
-      var n = 0
-      while i < text.count && n < node.nodes.count {
+      for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         NSLog("Root - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
@@ -627,28 +624,14 @@ class NBPictureMask {
         }
 
         i = retVal.index
-        n += 1
       }
 
-      //--------------------
-      // Finished with text but there is mask remaining.
-      // This might be ok if it is completely optional
-
-      while i == text.count && n < node.nodes.count {
-        switch node.nodes[n].type {
-        case .Optional :
-          n += 1
-        default :
-          return( i, .NotGood, "No match")
-        }
-      }
-      
       //--------------------
       // Final determination
 
-      if i == text.count && n == node.nodes.count {
+      if i == text.count {
         return( i, .Match, nil)
-      } else if i < text.count && n == node.nodes.count {
+      } else if i < text.count {
         return( i, .OkSoFar, nil)
       } else {
         return( i, .NotGood, "No match")
@@ -660,8 +643,7 @@ class NBPictureMask {
 
       var retVal : CheckResult
 
-      var n = 0   // Normally just one node
-      while i < text.count && n < node.nodes.count {
+      for n in 0 ..< node.nodes.count {
 
         var cnt = 0
         repeat {
@@ -683,6 +665,10 @@ class NBPictureMask {
             i = retVal.index
           // If index advanced then something matched up to that point
           case .OkSoFar :
+            // Not advancing so stop repeating
+            if i == retVal.index {
+              return( retVal.index, retVal.status, retVal.errMsg)
+            }
             i = retVal.index
           case .NotGood :
             return( retVal.index, retVal.status, retVal.errMsg)
@@ -696,16 +682,14 @@ class NBPictureMask {
         if retVal.status == .NotGood {
           return( retVal.index, retVal.status, retVal.errMsg)
         }
-
-        n += 1
       }
 
       //--------------------
       // Final determination
 
-      if i == text.count && n == node.nodes.count {
+      if i == text.count {
         return( i, .Match, nil)
-      } else if i < text.count && n == node.nodes.count {
+      } else if i < text.count {
         return( i, .OkSoFar, nil)
       } else {
         return( i, .NotGood, "No match")
@@ -717,8 +701,7 @@ class NBPictureMask {
 
     case .Grouping :
 
-      var n = 0
-      while i < text.count && n < node.nodes.count {
+      for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         NSLog("Grouping - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
@@ -732,37 +715,9 @@ class NBPictureMask {
         default :
           break;
         }
-
-        n += 1
       }
 
       return( i, .NotGood, "No match")
-
-/*
-      //--------------------
-      // Finished with text but there is mask remaining.
-      // This might be ok if it is completely optional
-
-      while i == text.count && n < node.nodes.count {
-        switch node.nodes[n].type {
-        case .Optional :
-          n += 1
-        default :
-          return( i, .NotGood, "No match")
-        }
-      }
-      
-      //--------------------
-      // Final determination
-
-      if i == text.count && n == node.nodes.count {
-        return( i, .Match, nil)
-      } else if i < text.count && n == node.nodes.count {
-        return( i, .NotGood, nil)
-      } else {
-        return( i, .NotGood, "No match")
-      }
-*/
 
     //--------------------
 
@@ -774,8 +729,7 @@ class NBPictureMask {
 
     case .Group :
 
-      var n = 0
-      while i < text.count && n < node.nodes.count {
+      for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         NSLog("Group - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
@@ -785,28 +739,14 @@ class NBPictureMask {
         }
 
         i = retVal.index
-        n += 1
       }
 
-      //--------------------
-      // Finished with text but there is mask remaining.
-      // This might be ok if it is completely optional
-
-      while i == text.count && n < node.nodes.count {
-        switch node.nodes[n].type {
-        case .Optional :
-          n += 1
-        default :
-          return( i, .NotGood, "No match")
-        }
-      }
-      
       //--------------------
       // Final determination
 
-      if i == text.count && n == node.nodes.count {
+      if i == text.count {
         return( i, .Match, nil)
-      } else if i < text.count && n == node.nodes.count {
+      } else if i < text.count {
         return( i, .OkSoFar, nil)
       } else {
         return( i, .NotGood, "No match")
@@ -816,8 +756,7 @@ class NBPictureMask {
 
     case .Optional :
 
-      var n = 0
-      while i < text.count && n < node.nodes.count {
+      for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         NSLog("Optional - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
@@ -831,66 +770,19 @@ class NBPictureMask {
         default :
           break;
         }
-
-        n += 1
       }
 
-      //--------------------
-      // Finished with text but there is mask remaining.
-      // This might be ok if it is completely optional
-
-      while i == text.count && n < node.nodes.count {
-        switch node.nodes[n].type {
-        case .Optional :
-          n += 1
-        default :
-          return( i, .NotGood, "No match")
-        }
-      }
-      
       //--------------------
       // Final determination
 
-      if i == text.count && n == node.nodes.count {
+      if i == text.count {
         return( i, .Match, nil)
-      } else if i < text.count && n == node.nodes.count {
+      } else if i < text.count {
         return( i, .OkSoFar, nil)
       } else {
         return( i, .NotGood, "No match")
       }
 
-/*
-      var retVal : CheckResult
-
-      for n in node.nodes {
-
-        if i == text.count {
-          return(i, .NotGood, "Did not match optional")
-        }
-
-        retVal = check(text, index: i, node: n)
-        NSLog("Optional - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
-
-        switch retVal.status {
-
-        // If everything matched then go with that
-        case .Match,
-             .OkSoFar :
-          i = retVal.index
-        case .NotGood :
-          return( retVal.index, retVal.status, retVal.errMsg)
-        }
-
-        // If we make it to the end then result is most recent outcome
-        if retVal.status == .NotGood {
-          return( retVal.index, retVal.status, retVal.errMsg)
-        }
-
-      }
-
-      // If we make it to the end then it must have been all good
-      return(i, .Match, nil)
-*/
     //--------------------
 
     case .OptionalEnd :

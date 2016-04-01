@@ -176,22 +176,22 @@ class NBPictureMaskTests: XCTestCase {
     var retVal : NBPictureMask.CheckResult
 
     pictureMask.mask = "{}"
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
 
     pictureMask.mask = "{#,}"
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
 
     pictureMask.mask = "{,#}"
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
 
     pictureMask.mask = "{#, ,.,;,,;;,:,;[,;],(,),}"
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check(" ");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check(".");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
@@ -236,7 +236,7 @@ class NBPictureMaskTests: XCTestCase {
     var retVal : NBPictureMask.CheckResult
 
     pictureMask.mask = "*#"
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
     retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
@@ -476,14 +476,12 @@ class NBPictureMaskTests: XCTestCase {
 
     var retVal : NBPictureMask.CheckResult
 
-    pictureMask.mask = "*[&[*?]]"
-    retVal = pictureMask.check("Hi");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
-
-    pictureMask.mask = "*[&[*?]*[ ]]"
-    retVal = pictureMask.check("Hi");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
-
     pictureMask.mask = "*[&[*?]*[{#, ,.,;,,;;,:,;[,;],(,),}]]"
-    retVal = pictureMask.check("Hi");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Hi");                     XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("A B");                    XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("Hi There.");              XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("Hi. How Are You. (Ok)");  XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("Hi. How Are You? (Ok)");  XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
   }
 
   func test_examples_International_test() {
@@ -542,22 +540,33 @@ class NBPictureMaskTests: XCTestCase {
 
     var retVal : NBPictureMask.CheckResult
 
-    pictureMask.mask = "{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}"
+    pictureMask.mask = "{#[#][#][.*#]}"
+    retVal = pictureMask.check("0.0");          XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.0");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.45678");    XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123..45678");   XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+
+    pictureMask.mask =  "{#[#][#]{{;,###*[;,###]},*#}[.*#]}"
+    retVal = pictureMask.check("1,234");        XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234.5");      XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234,567.89"); XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+
+    pictureMask.mask = "{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}"
+    retVal = pictureMask.check(".0");           XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check(".01");          XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check(".012");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+
+    pictureMask.mask = "{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]"
+    retVal = pictureMask.check("1,234E2");      XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234E+20");    XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234E-30");    XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
 
     pictureMask.mask = "{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}"
-    retVal = pictureMask.check("-0.01");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
-  }
-
-  func test_examples_international_floating_point() {
-  //----------------------------------------------------------------------------
-  // International floating point number
-
-    let pictureMask = NBPictureMask()
-
-    var retVal : NBPictureMask.CheckResult
-
-    pictureMask.mask = "{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}"
-    retVal = pictureMask.check("-0.01");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234");        XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234.0");      XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+//    retVal = pictureMask.check("1,234.0E01");      XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
   }
 
   func test_examples_icd_9_or_10() {
@@ -568,7 +577,17 @@ class NBPictureMaskTests: XCTestCase {
 
     var retVal : NBPictureMask.CheckResult
 
+
     pictureMask.mask = "{X{X},Z{Z},{#,&}#{#,&}.[#,&][#,&][#,&][#,&]}"
-    retVal = pictureMask.check("ZZ000.0000");         XCTAssert(retVal.status == .Match, retVal.errMsg ?? "")
+    retVal = pictureMask.check("X");            XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("XX");           XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("ZZ");           XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.1");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.A");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("A1B.1");        XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1A3.1");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
+    retVal = pictureMask.check("A1B.A1B2");     XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
   }
 }
