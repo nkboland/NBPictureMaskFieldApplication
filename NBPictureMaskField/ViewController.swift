@@ -13,12 +13,14 @@ class ViewController: UIViewController {
   let nbPictureMask = NBPictureMask()
 
   @IBOutlet weak var maskStatusLabel: UILabel!
-  @IBOutlet weak var textStatusLabel: UILabel!
+  @IBOutlet weak var maskTextField: UITextField!
+  @IBOutlet weak var inputStatusLabel: UILabel!
+  @IBOutlet weak var inputTextField: NBPictureMaskField!
   @IBOutlet weak var autoFillSwitch: UISwitch!
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view, typically from a nib.
+    maskFieldEditingChanged(maskTextField)
   }
 
   override func didReceiveMemoryWarning() {
