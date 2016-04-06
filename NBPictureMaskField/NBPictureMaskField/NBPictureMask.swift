@@ -53,7 +53,7 @@ class NBPictureMask {
   //--------------------
   // MARK: - Constants
 
-  struct kMask {
+  private struct kMask {
     static let digit          : Character = "#"
     static let letter         : Character = "?"
     static let letterToUpper  : Character = "&"
@@ -72,7 +72,7 @@ class NBPictureMask {
   //--------------------
   // MARK: - Types
 
-  enum NodeType {
+  private enum NodeType {
   //----------------------------------------------------------------------------
   // A node must be one of these types.
 
@@ -93,7 +93,7 @@ class NBPictureMask {
       Group                                   //  ,  Group - Example: {Group1,Group2}
   }
 
-  struct Node {
+  private struct Node {
   //----------------------------------------------------------------------------
 
     var type    : NodeType = .Root            // Node type indicates how it should be handled
@@ -112,26 +112,16 @@ class NBPictureMask {
       Match                                   // It matches
   }
 
-  typealias ParseMaskResult = (index: Int, errMsg: String?)
+  typealias MaskError = (index: Int, errMsg: String?)
   typealias CheckResult = (index: Int, status: MatchStatus, errMsg: String?)
 
   //--------------------
   // MARK: - Variables
 
-  private var localMask = String()
+  private var mask = String()
   private var text = String()
 
   private var rootNode = Node()               // Primary node
-
-  var mask: String {
-  //----------------------------------------------------------------------------
-    get { return localMask }
-    set {
-      localMask = newValue
-      parseMask(localMask)
-      printMaskTree()
-    }
-  }
 
   //--------------------
   // MARK: - Helper Methods
@@ -183,7 +173,14 @@ class NBPictureMask {
     return s.componentsSeparatedByString(".").last ?? "unknown"
   }
 
-  func parseMask(mask: String) -> ParseMaskResult {
+  func setMask(mask: String) -> MaskError {
+  //----------------------------------------------------------------------------
+
+    self.mask = mask
+    return parseMask(mask)
+  }
+
+  func parseMask(mask: String) -> MaskError {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
@@ -191,7 +188,7 @@ class NBPictureMask {
     return parseMask( Array(mask.characters), node: &rootNode )
   }
 
-  private func parseMask(mask: [Character], inout node: Node) -> ParseMaskResult {
+  private func parseMask(mask: [Character], inout node: Node) -> MaskError {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
@@ -209,7 +206,7 @@ class NBPictureMask {
     return (0, nil)
   }
 
-  private func parseMask(mask: [Character], index: Int, inout node: Node) -> ParseMaskResult {
+  private func parseMask(mask: [Character], index: Int, inout node: Node) -> MaskError {
   //----------------------------------------------------------------------------
   // This parses a picture mask. It takes the following inputs:
   //
@@ -332,7 +329,8 @@ class NBPictureMask {
 
       let retVal = parseMask(mask, index: i, node: &n)
       i = retVal.index
-      if retVal.errMsg != nil { return retVal }
+
+      guard retVal.errMsg == nil else { return(retVal) }
 
       n.type = .Repeat
       n.literal = "*"
@@ -366,9 +364,8 @@ class NBPictureMask {
           let retVal = parseMask(mask, index: i, node: &g)
           i = retVal.index
 
-          guard i < mask.count else {
-            return ( i, "Grouping is missing '\(kMask.groupingEnd)'." )
-          }
+          guard retVal.errMsg == nil else { return(retVal) }
+          guard i < mask.count else { return ( i, "Grouping is missing '\(kMask.groupingEnd)'." ) }
 
         } while mask[i] != kMask.group && mask[i] != kMask.groupingEnd
 
@@ -413,9 +410,8 @@ class NBPictureMask {
           let retVal = parseMask(mask, index: i, node: &g)
           i = retVal.index
 
-          guard i < mask.count else {
-            return ( i, "Optional is missing '\(kMask.optionalEnd)'." )
-          }
+          guard retVal.errMsg == nil else { return(retVal) }
+          guard i < mask.count else { return (i, "Optional is missing '\(kMask.optionalEnd)'.") }
 
         } while mask[i] != kMask.group && mask[i] != kMask.optionalEnd
         
@@ -458,18 +454,22 @@ class NBPictureMask {
 
   }
 
-  private func printMaskTree() {
+  func maskTreeToString() -> [String] {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
-    NSLog("==============================")
-    NSLog("MASK TREE '\(localMask)'")
-    printMaskTree(0, node: rootNode)
-    NSLog("MASK TREE FINISHED")
-    NSLog("==============================")
+    var lines = [String]()
+
+    lines.append("==============================")
+    lines.append("MASK TREE '\(mask)'")
+    NBPictureMask.printMaskTree(&lines, index: 0, node: rootNode)
+    lines.append("MASK TREE FINISHED")
+    lines.append("==============================")
+
+    return lines
   }
 
-  private func printMaskTree(index: Int, node: Node) {
+  private class func printMaskTree(inout lines: [String], index: Int, node: Node) {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
@@ -485,19 +485,19 @@ class NBPictureMask {
            .AnyChar,
            .AnyCharToUpper,
            .Literal :
-        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
       case .Root :
         break
       case .Repeat :
-        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
-        printMaskTree(index+1, node: n)
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
+        printMaskTree(&lines, index: index+1, node: n)
       case .Grouping,
            .GroupingEnd,
            .Optional,
            .OptionalEnd,
            .Group :
-        NSLog("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
-        printMaskTree(index+1, node: n)
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
+        printMaskTree(&lines, index: index+1, node: n)
       }
     }
   }
@@ -523,7 +523,7 @@ class NBPictureMask {
     return (index: 0, status: .NotGood, errMsg: "No match")
   }
 
-  class func check(text: [Character], index: Int, node: Node) -> CheckResult {
+  private class func check(text: [Character], index: Int, node: Node) -> CheckResult {
   //----------------------------------------------------------------------------
   // This checks the text against the picture mask (tree). It takes the following inputs:
   //
