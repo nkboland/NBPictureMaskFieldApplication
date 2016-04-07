@@ -9,8 +9,7 @@
 import UIKit
 
 class ViewController: UIViewController, UITextFieldDelegate {
-
-  let nbPictureMask = NBPictureMask()
+//------------------------------------------------------------------------------
 
   @IBOutlet weak var maskStatusLabel: UILabel!
   @IBOutlet weak var maskTextField: UITextField!
@@ -20,34 +19,66 @@ class ViewController: UIViewController, UITextFieldDelegate {
   @IBOutlet weak var maskTreeLabel: UILabel!
 
   override func viewDidLoad() {
+  //----------------------------------------------------------------------------
     super.viewDidLoad()
-    maskTextField.delegate = self
+
+    // Dismiss keyboard when tapping outside text field
     let tap = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
     view.addGestureRecognizer(tap)
+
+    // We need to update things when field is edited
+    maskTextField.delegate = self
+
+    // Reflect current input mask value
+    maskTextField.text = inputTextField.mask
     maskFieldEditingChanged(maskTextField)
   }
 
   override func didReceiveMemoryWarning() {
+  //----------------------------------------------------------------------------
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
   }
 
   @IBAction func maskFieldEditingChanged(sender: AnyObject) {
+  //----------------------------------------------------------------------------
+  // Update lots of things when the mask changes.
+
     let textField = sender as! UITextField
     let mask = textField.text ?? ""
-    let retVal = nbPictureMask.setMask(mask)
-    let errMsg = retVal.errMsg ?? "Mask is valid"
-    maskStatusLabel.text = errMsg
-    maskTreeLabel.text = nbPictureMask.maskTreeToString()
+
+    inputTextField.mask = mask
+    let errMsg = inputTextField.maskErrMsg
+
+    maskStatusLabel.text = errMsg ?? "Mask ok"
+    maskTreeLabel.text = inputTextField.maskTreeToString
+  }
+
+  @IBAction func textFieldEditingChanged(sender: AnyObject) {
+  //----------------------------------------------------------------------------
+  // Update things when the text changes.
+
+    let retVal = inputTextField.check(inputTextField.text ?? "")
+
+    let str : String
+
+    switch retVal.status {
+    case .Match :     str = "Match"
+    case .OkSoFar :   str = "Ok so far"
+    case .NotGood :   str = "Not good"
+    }
+
+    inputStatusLabel.text = "\(str) \(retVal.errMsg ?? "")"
   }
 
   func dismissKeyboard() {
+  //----------------------------------------------------------------------------
     view.endEditing(true)
   }
 
   func textFieldShouldReturn(textField: UITextField) -> Bool {
+  //----------------------------------------------------------------------------
     dismissKeyboard()
     return false
   }
 }
-

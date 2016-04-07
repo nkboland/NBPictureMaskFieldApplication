@@ -30,22 +30,19 @@
 import UIKit
 import Foundation
 
-//--------------------
-// MARK: - NBPictureMaskField
-
 class NBPictureMaskField: UITextField {
 //------------------------------------------------------------------------------
 
   //--------------------
-  // Saved properties
+  // MARK: - Variables
 
-  var localMask: String!
+  var maskErrMsg: String?
+  var nbPictureMask : NBPictureMask!
 
   required init?(coder aDecoder: NSCoder) {
   //----------------------------------------------------------------------------
+    nbPictureMask = NBPictureMask()
     super.init(coder: aDecoder)
-//    self.maskObject = [NBPictureMaskFieldBlock]()
-    //    fatalError("init(coder:) has not been implemented")
   }
 
   deinit {
@@ -54,12 +51,40 @@ class NBPictureMaskField: UITextField {
   }
 
   //--------------------
-  // MARK: - Displaying mask
+  // MARK: - Mask
 
   @IBInspectable var mask: String {
   //----------------------------------------------------------------------------
-    get { return localMask }
-    set { localMask = newValue }
+    get {
+      return nbPictureMask.getMask()
+    }
+    set {
+      let retVal = nbPictureMask.setMask(newValue)
+      maskErrMsg = retVal.errMsg
+    }
+  }
+
+  var maskErrorMessage: String? {
+  //----------------------------------------------------------------------------
+  // Returns the error message for the current mask, otherwise nil.
+
+    get {
+      return maskErrMsg
+    }
+  }
+
+  var maskTreeToString: String {
+  //----------------------------------------------------------------------------
+  // Returns the parsed mask tree as a string.
+
+    get {
+      return nbPictureMask.maskTreeToString()
+    }
+  }
+
+  func check(text: String) -> NBPictureMask.CheckResult {
+  //----------------------------------------------------------------------------
+    return nbPictureMask.check(text)
   }
 
   //--------------------
@@ -71,9 +96,9 @@ class NBPictureMaskField: UITextField {
 
     super.drawRect(rect)
 
-    // This observer used on manual updatind text property
+    // This observer used on manual updating text property
     delegate = self
-    addObserver(self, forKeyPath: "text", options: [], context: nil)
+//    addObserver(self, forKeyPath: "text", options: [], context: nil)
   }
 
 }
@@ -86,7 +111,7 @@ extension NBPictureMaskField {
 
   override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
   //----------------------------------------------------------------------------
-
+    NSLog("OBSERVE VALUE FOR KEY PATH")
   }
 
 }
@@ -112,7 +137,17 @@ extension NBPictureMaskField: UITextFieldDelegate {
     let currentText = textField.text ?? ""
     let prospectiveText = (currentText as NSString).stringByReplacingCharactersInRange(range, withString: string)
     NSLog("TextField prospectiveText:\(prospectiveText)")
-    return true;
+
+    return true
+/*
+    let retVal = nbPictureMask.check(prospectiveText)
+
+    if retVal.status == .Match {
+      return true
+    } else {
+      return false
+    }
+*/
   }
 
 }

@@ -173,9 +173,13 @@ class NBPictureMask {
     return s.componentsSeparatedByString(".").last ?? "unknown"
   }
 
+  func getMask() -> String {
+  //----------------------------------------------------------------------------
+    return mask
+  }
+
   func setMask(mask: String) -> MaskError {
   //----------------------------------------------------------------------------
-
     self.mask = mask
     return parseMask(mask)
   }
@@ -239,7 +243,7 @@ class NBPictureMask {
 
       i += 1
       guard i < mask.count else {
-        return ( i, "Escape is missing characters following it." )
+        return ( i, "Escape is last character." )
       }
       c = mask[i]
       n.str.append(c)
@@ -309,7 +313,7 @@ class NBPictureMask {
 
         i += 1
         guard i < mask.count else {
-          return ( i, "Repetition is missing characters following it." )
+          return ( i, "Repetition is last character." )
         }
 
         c = mask[i]
@@ -505,18 +509,20 @@ class NBPictureMask {
     let tc = text.characters
     //NSLog("CHECK Mask: '\(mask)' Text: '\(String(tc))'")
 
-    var retVal : CheckResult
-
     // Look at all possible combinations of optionals
-    retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode)
-    if retVal.status == .Match {
+    let retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode)
+
+    switch retVal.status {
+    case .Match :
       //NSLog("MATCH - Mask: '\(mask)' Text: '\(String(tc))'")
       return (index: retVal.index, status: .Match, errMsg: nil)
+    case .OkSoFar :
+      //NSLog("OK SO FAR -  Mask: '\(mask)' Text: '\(String(tc))'")
+      return (index: 0, status: .OkSoFar, errMsg: nil)
+    case .NotGood :
+      //NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))'")
+      return (index: 0, status: .NotGood, errMsg: "No match")
     }
-
-    // Nothing matched
-    //NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))'")
-    return (index: 0, status: .NotGood, errMsg: "No match")
   }
 
   private class func check(text: [Character], index: Int, node: Node) -> CheckResult {
@@ -543,7 +549,7 @@ class NBPictureMask {
 
     case .Digit :
 
-      guard i < text.count else { return( i, .NotGood, "No more digits") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isDigit( text[i] ) {
         return( i+1, .Match, nil)
@@ -555,7 +561,7 @@ class NBPictureMask {
 
     case .Letter :
 
-      guard i < text.count else { return( i, .NotGood, "No more letters") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
@@ -567,7 +573,7 @@ class NBPictureMask {
 
     case .LetterToUpper :
 
-      guard i < text.count else { return( i, .NotGood, "No more letters to upper") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
@@ -579,7 +585,7 @@ class NBPictureMask {
 
     case .LetterToLower :
 
-      guard i < text.count else { return( i, .NotGood, "No more letters to lower") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
         return( i+1, .Match, nil)
@@ -591,7 +597,7 @@ class NBPictureMask {
 
     case .AnyChar :
 
-      guard i < text.count else { return( i, .NotGood, "No more any characters") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       return( i+1, .Match, nil)
 
@@ -599,7 +605,7 @@ class NBPictureMask {
 
     case .AnyCharToUpper :
 
-      guard i < text.count else { return( i, .NotGood, "No more any characters to upper") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       return( i+1, .Match, nil)
 
@@ -607,7 +613,7 @@ class NBPictureMask {
 
     case .Literal :
 
-      guard i < text.count else { return( i, .NotGood, "No more literal characters") }
+      guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if text[i] == node.literal {
         return( i+1, .Match, nil)
@@ -620,27 +626,38 @@ class NBPictureMask {
 
     case .Root :
 
+      var status: MatchStatus = .OkSoFar
+
       for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         //NSLog("Root - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
+        i = retVal.index
+        status = retVal.status
 
-        if retVal.status == .NotGood {
-          return( retVal.index, retVal.status, retVal.errMsg)
+        switch status {
+        case .Match :
+          break;
+        case .OkSoFar :
+          if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
+        case .NotGood :
+          return retVal
         }
 
-        i = retVal.index
       }
 
       //--------------------
       // Final determination
 
-      if i == text.count {
-        return( i, .Match, nil)
-      } else if i < text.count {
-        return( i, .OkSoFar, nil)
-      } else {
-        return( i, .NotGood, "No match")
+      switch status {
+      case .Match :
+        if i < text.count { return(i, .NotGood, "No match") }   // Too much input
+        return(i, .Match, nil)
+      case .OkSoFar :
+        if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
+        return(i, .NotGood, "No match")
+      case .NotGood :
+        return(i, .NotGood, "No match")
       }
 
     //--------------------
@@ -735,21 +752,41 @@ class NBPictureMask {
 
     case .Group :
 
+      var status: MatchStatus = .OkSoFar
+
       for n in 0 ..< node.nodes.count {
 
         let retVal = check(text, index: i, node: node.nodes[n])
         //NSLog("Group - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
+        i = retVal.index
+        status = retVal.status
 
-        if retVal.status == .NotGood {
-          return( retVal.index, retVal.status, retVal.errMsg)
+        switch status {
+        case .Match :
+          break;
+        case .OkSoFar :
+          if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
+        case .NotGood :
+          return retVal
         }
 
-        i = retVal.index
       }
 
       //--------------------
       // Final determination
 
+      switch status {
+      case .Match :
+        if i < text.count { return(i, .OkSoFar, nil) }          // Still some input to go
+        return(i, .Match, nil)
+      case .OkSoFar :
+        if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
+        return(i, .NotGood, "No match")
+      case .NotGood :
+        return(i, .NotGood, "No match")
+      }
+
+/*
       if i == text.count {
         return( i, .Match, nil)
       } else if i < text.count {
@@ -757,6 +794,7 @@ class NBPictureMask {
       } else {
         return( i, .NotGood, "No match")
       }
+*/
 
     //--------------------
     // Return on the first match
@@ -766,10 +804,11 @@ class NBPictureMask {
       for n in 0 ..< node.nodes.count {
         let retVal = check(text, index: i, node: node.nodes[n])
         switch retVal.status {
-        case .Match,
-             .OkSoFar :
-          return( retVal.index, retVal.status, retVal.errMsg)
-        default :
+        case .Match :
+          return(retVal.index, retVal.status, retVal.errMsg)
+        case .OkSoFar :
+          return(retVal.index, .Match, retVal.errMsg)             // Ok so far so make consider it matched
+        case .NotGood :
           break;
         }
       }
