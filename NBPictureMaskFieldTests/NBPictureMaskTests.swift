@@ -31,14 +31,15 @@ class NBPictureMaskTests: XCTestCase {
     let pictureMask = NBPictureMask()
     var maskVal: NBPictureMask.MaskError
 
+    maskVal = pictureMask.setMask("");      XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{");     XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("}");     XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("[");     XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("]");     XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("[}");    XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{]");    XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
-    maskVal = pictureMask.setMask("{]");    XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{}");    XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
+    maskVal = pictureMask.setMask("[]");    XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{,}");   XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{#,}");  XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
     maskVal = pictureMask.setMask("{,#}");  XCTAssert(maskVal.errMsg != nil,   maskVal.errMsg ?? "")
@@ -59,7 +60,7 @@ class NBPictureMaskTests: XCTestCase {
     var retVal: NBPictureMask.CheckResult
 
     maskVal = pictureMask.setMask("")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    XCTAssert(maskVal.errMsg != nil, maskVal.errMsg ?? "")
     retVal = pictureMask.check("");         XCTAssert(retVal.status == .Match,   retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotGood, retVal.errMsg ?? "")
 
