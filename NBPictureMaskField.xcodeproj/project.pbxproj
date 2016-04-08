@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0107BAD31CB8320C00F56ACB /* NBPictureMaskTestText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */; };
 		01BC3BEA1CA82B290074BC38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3BE91CA82B290074BC38 /* AppDelegate.swift */; };
 		01BC3BEC1CA82B290074BC38 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3BEB1CA82B290074BC38 /* ViewController.swift */; };
 		01BC3BEF1CA82B290074BC38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BED1CA82B290074BC38 /* Main.storyboard */; };
@@ -14,7 +15,7 @@
 		01BC3BF41CA82B290074BC38 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BF21CA82B290074BC38 /* LaunchScreen.storyboard */; };
 		01BC3C0C1CA82B5F0074BC38 /* NBPictureMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0A1CA82B5F0074BC38 /* NBPictureMask.swift */; };
 		01BC3C0D1CA82B5F0074BC38 /* NBPictureMaskField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0B1CA82B5F0074BC38 /* NBPictureMaskField.swift */; };
-		01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */; };
+		01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTestText.swift; sourceTree = "<group>"; };
 		01BC3BE61CA82B290074BC38 /* NBPictureMaskField.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NBPictureMaskField.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01BC3BE91CA82B290074BC38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01BC3BEB1CA82B290074BC38 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -39,7 +41,7 @@
 		01BC3C001CA82B2A0074BC38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01BC3C0A1CA82B5F0074BC38 /* NBPictureMask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMask.swift; sourceTree = "<group>"; };
 		01BC3C0B1CA82B5F0074BC38 /* NBPictureMaskField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskField.swift; sourceTree = "<group>"; };
-		01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTests.swift; sourceTree = "<group>"; };
+		01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTestStatus.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +97,8 @@
 		01BC3BFD1CA82B2A0074BC38 /* NBPictureMaskFieldTests */ = {
 			isa = PBXGroup;
 			children = (
-				01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTests.swift */,
+				01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift */,
+				0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */,
 				01BC3C001CA82B2A0074BC38 /* Info.plist */,
 			);
 			path = NBPictureMaskFieldTests;
@@ -223,7 +226,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTests.swift in Sources */,
+				01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift in Sources */,
+				0107BAD31CB8320C00F56ACB /* NBPictureMaskTestText.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +413,7 @@
 				01BC3C051CA82B2A0074BC38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01BC3C061CA82B2A0074BC38 /* Build configuration list for PBXNativeTarget "NBPictureMaskFieldTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +422,7 @@
 				01BC3C081CA82B2A0074BC38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
