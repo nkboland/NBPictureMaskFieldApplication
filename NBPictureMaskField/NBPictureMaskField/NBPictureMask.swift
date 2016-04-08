@@ -11,37 +11,63 @@
 //  OVERVIEW
 //  --------
 //
-//  Mask -  This defines what the field will accept. Groups can be created
-//          inside { }. These letters indicate the following format:
+//  This is allows a person to specify what may be entered in a text field.
 //
-//            d = digits 0..9
-//            D = anything other than 0..9
-//            a = a..z, A..Z
-//            W = anything other than a..z, A..Z
-//            . = anything (default)
+//  The "mask" uses the following special characters:
 //
-//            Examples
-//            {dddd}-{DDDD}-{WaWa}-{aaaa}   would allow 0123-AbCd-0a2b-XxYy
+//    #     Any digit 0..9
+//    ?     Any letter a..z or A..Z
+//    &     Any letter a..z or A..Z which is automatically converted to uppercase
+//    ~     Any letter a..z or A..Z which is automatically converted to lowercase
+//    @     Any character
+//    !     Any character which is automatically converted to uppercase
+//    ;     The next character is taken literally
+//    *     Repeat the specified number of times
+//    {a,b} Grouping operation
+//    [a,b] Optional sequence of characters
 //
-//  Template -  This is used to fill in the mask for displaying.
+//  Note - The mask is matched left to right. You must be careful to avoid
+//         situations where one element is completely contained in another.
 //
-//  Grouping Algorithm
-//  ------------------
+//  Grouping {a,b}
+//  --------------
 //
-//  Each group...
+//  Each group is examined left to right. The first group that matches
+//  will be used. Two or more groups are separated with a comma.
 //
-//  The first group to be ok is the one.
+//  Optional [a,b]
+//  --------------
 //
-//  Optional Algorithm
-//  ------------------
+//  This is similar to the grouping operation but the characters are not
+//  required. Two or more optional items are separated with a comma.
+//
+//  Repeat *
+//  --------
+//
+//  The symbol following the repeat character is optionally repeated
+//  any number of times. If a numeric value is specified then it must
+//  match that exact number of times.
+//
+//  Examples
+//  --------
+//
+//  #                 One digit
+//  ##                Two digits
+//  *5#               Five digits
+//  #*#               One digit followed by any number of other digits
+//  #&                Single digit followed by single character converted to uppercase
+//  #[#]              One or two digits
+//  #*4[#]            One to five digits
+//  {#,&}             Digit or character converted to uppercase
+//  #####[-####]      Zipcode with optional plus four
+//  [+,-]#*#[.*#]     1, +1, +1., -1.0, 123.456
 //
 //  TO DO
 //  -----
 //
-//  1. Mask parsing returns status.
-//  2. Auto fill implementation.
-//  3. Text checking error message.
-//  4. Capitalization and text replacement.
+//  1. Auto fill implementation.
+//  2. Text checking error message.
+//  3. Capitalization and text replacement.
 //
 //==============================================================================
 
@@ -523,7 +549,7 @@ class NBPictureMask {
   //    isOk    If check is currently ok otherwise false
   //    errMsg  nil if everything is ok otherwise an isOk    True
 
-    NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
+    //NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
 
     var i = index
 
@@ -641,17 +667,18 @@ class NBPictureMask {
         // No more input
         if i == text.count {
           if loopCount == 0 { return(i, .Ok, nil) }    // Repeat Oked to the end of the input OR no count specified
-          else              { return(i, .NotOk, "Repeat is longer than the input") }
+          else              { return(i, .OkSoFar, nil) }
         }
 
         for n in 0 ..< node.nodes.count {
           let retVal = check(text, index: i, node: node.nodes[n])
-          NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+          //NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
           i = retVal.index
           switch retVal.status {
-          case .Ok :          break;            // Continue while everything is ok
-          case .OkSoFar :     return retVal     // No more text
-          case .NotOk :       return retVal     // Problem
+          case .Ok :        break;                  // Continue while everything is ok
+          case .OkSoFar :   return retVal           // No more text
+          case .NotOk :     if loopCount == 0 { break }   // No count specified so it doesn't have to match
+                            return retVal           // Problem
           }
         }
 
@@ -660,14 +687,14 @@ class NBPictureMask {
         // Repeat did not advance and this can only happen if everything was optional
         if i == startIndex { return(i, .Ok, nil) }
 
-        if loopCount == 0 { continue }          // Special case repeats until end of text
+        if loopCount == 0 { continue }              // Special case repeats until end of text
         loopCount -= 1
         if loopCount == 0 { break }
       }
 
       // No more loops
 
-      return(i, .Ok, nil)                     // Mask and text up to this point match
+      return(i, .Ok, nil)                           // Mask and text up to this point match
 
     //--------------------
     // Grouping {} or {#} or {#,?} or {R,G,B}
@@ -676,19 +703,21 @@ class NBPictureMask {
 
     case .Grouping :
 
+      var retValOkSoFar : CheckResult?
+
       for n in 0 ..< node.nodes.count {
         let retVal = check(text, index: i, node: node.nodes[n])
-        NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
-        case .Ok :          return retVal     // Match first ok group
-        case .OkSoFar :     return retVal     // Match first ok so far group    // NOTE - might consider continuing search
-        case .NotOk :       break             // Try next group
+        case .Ok :          return retVal           // Match first ok group
+        case .OkSoFar :     retValOkSoFar = retVal  // This is ok but see if something better
+        case .NotOk :       break                   // Try next group
         }
       }
 
       // No more mask
-      return(i, .NotOk, "Not ok")             // More text than mask
-      // return(i, .OkSoFar, nil)             // NOTE - might consider returning first "OkSoFar"
+      if retValOkSoFar != nil { return retValOkSoFar! }   // This is better than nothing
+      return(i, .NotOk, "Not ok")                         // More text than mask
 
     //--------------------
 
@@ -704,7 +733,7 @@ class NBPictureMask {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(text, index: i, node: node.nodes[n])
-        NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         i = retVal.index
         switch retVal.status {
         case .Ok :          break;            // Continue while everything is ok
@@ -724,19 +753,21 @@ class NBPictureMask {
 
       guard i < text.count else { return( i, .Ok, nil) }    // Optional not needed if no text
 
+      var retValOkSoFar : CheckResult?
+
       for n in 0 ..< node.nodes.count {
         let retVal = check(text, index: i, node: node.nodes[n])
-        NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
-        case .Ok :          return retVal     // Match first ok group
-        case .OkSoFar :     return retVal     // Match first ok so far group    // NOTE - might consider continuing search
-        case .NotOk :       break             // Try next group
+        case .Ok :          return retVal           // Match first ok group
+        case .OkSoFar :     retValOkSoFar = retVal  // This is ok but see if something better
+        case .NotOk :       break                   // Try next group
         }
       }
 
       // No more mask
-      return(i, .Ok, nil)                     // Does not have to match
-      // return(i, .OkSoFar, nil)             // NOTE - might consider returning first "OkSoFar"
+      if retValOkSoFar != nil { return retValOkSoFar! }   // This is better than nothing
+      return(i, .Ok, nil)                                 // Does not have to match
 
     //--------------------
 

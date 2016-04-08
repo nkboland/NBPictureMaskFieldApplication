@@ -177,6 +177,15 @@ class NBPictureMaskTests: XCTestCase {
     retVal = pictureMask.check("A1");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("123");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("1234");     XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+
+    maskVal = pictureMask.setMask("[+,-]#*#[.*#]")
+    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("+1");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("+1.");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-1.0");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("123.456");  XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
   }
 
   func test_grouping_group() {
@@ -289,7 +298,7 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("*2#")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("1A");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
@@ -300,9 +309,9 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("#*2#")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("1A");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("A1");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("123");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
@@ -312,7 +321,7 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("*2##")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("12");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("1A");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
@@ -323,10 +332,10 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("*2#*2#")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("");         XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-    retVal = pictureMask.check("123");      XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123");      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("1234");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("12345");    XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
 
@@ -360,11 +369,15 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("#{&,*#}")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("1A");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("1AB");      XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
     retVal = pictureMask.check("123");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+
+    maskVal = pictureMask.setMask("{#*#}E#")
+    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    retVal = pictureMask.check("1E0");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
   }
 
   func test_optional() {
@@ -496,6 +509,11 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("#[#]:#[#]:#[#] {AM,PM};, #[#]/#[#]/#[#]")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    retVal = pictureMask.check("");                       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");                      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1:");                     XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1:1:1 A");                XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1:1:1 AM, 1/1/");         XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("1:1:1 AM, 1/1/01");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("01:11:11 PM, 1/1/01");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("01:11:11 AM, 01/01/01");  XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
@@ -534,21 +552,6 @@ class NBPictureMaskTests: XCTestCase {
     retVal = pictureMask.check("Abc");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
   }
 
-  func test_examples_us_phone_number_optional_area_code() {
-  //----------------------------------------------------------------------------
-  // US phone number with optional area code
-
-    let pictureMask = NBPictureMask()
-    var maskVal: NBPictureMask.MaskError
-    var retVal: NBPictureMask.CheckResult
-
-    maskVal = pictureMask.setMask("{*3{#}-*4{#},{(*3{#}) ,*3{#}-}*3{#}-*4{#}}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("000-1234");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("000-111-2222");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("(000) 111-2222");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-  }
-
   func test_examples_zip_optional_4() {
   //----------------------------------------------------------------------------
   // US zip code with optional +4
@@ -559,10 +562,12 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("*5{#}[-*4#]")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("12345-123");    XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123456");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("12345-123");    XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("12345-1234");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("12345-12345");  XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
   }
 
   func test_examples_capitalized_words() {
@@ -600,17 +605,46 @@ class NBPictureMaskTests: XCTestCase {
     retVal = pictureMask.check("Hi");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
   }
 
-  func test_examples_us_phone_number_required_area_code() {
+  func test_examples_us_phone_number() {
   //----------------------------------------------------------------------------
-  // US phone number with required area code
+  // US phone number
 
     let pictureMask = NBPictureMask()
     var maskVal: NBPictureMask.MaskError
     var retVal: NBPictureMask.CheckResult
 
-    maskVal = pictureMask.setMask("{(*3{#}) ,*3{#}-, }*3{#}-*4{#}")
+    maskVal = pictureMask.setMask("{(*3{#}) ,*3{#}-}*3{#}-*4{#}")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("333-888-9999");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
+    retVal = pictureMask.check("");                 XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");                XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(");                XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-");             XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456-789");      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456-7890");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-789");    XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-7890");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123)456-7890");    XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-78901");  XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+
+    maskVal = pictureMask.setMask("{*3{#}-*4{#},{(*3{#}) ,*3{#}-}*3{#}-*4{#}}")
+    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    retVal = pictureMask.check("");                 XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");                XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(");                XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-");             XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456");          XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-4567");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-45678");        XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456-78");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-4567-8");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456-789");      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("123-456-7890");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) ");           XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-789");    XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-7890");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123)456-7890");    XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("(123) 456-78901");  XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
   }
 
   func test_examples_color_list_with_automatic_fill() {
@@ -623,7 +657,19 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("{Red,Gr{ay,een},B{l{ack,ue},rown},White,Yellow}")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("Blue");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("B");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Bl");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Bla");      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Black");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("Blu");      XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Blue");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("Br");       XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Brown");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("Browny");   XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("Y");        XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
+    retVal = pictureMask.check("Ylow");     XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("Yellow");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
   }
 
   func test_examples_yes_no() {
@@ -654,65 +700,40 @@ class NBPictureMaskTests: XCTestCase {
     var maskVal: NBPictureMask.MaskError
     var retVal: NBPictureMask.CheckResult
 
-    maskVal = pictureMask.setMask("{#[#][#][.*#]}")
+    maskVal = pictureMask.setMask(
+                "{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]," +
+                "({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]])," +
+              "[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}")
+
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("");             XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
-    retVal = pictureMask.check("0");            XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1");            XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("12");           XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("123");          XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234.5");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234,567.89"); XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("0.0");          XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("123.0");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("1234.0");       XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-    retVal = pictureMask.check("123.45678");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
-    retVal = pictureMask.check("123..45678");   XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
-
-    maskVal = pictureMask.setMask("{#[#][#]{*#}[.*#]}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");            XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12");           XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("123");          XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-
-    maskVal = pictureMask.setMask( "{#[#][#]{{;,###*[;,###]},*#}[.*#]}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1");            XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12");           XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("123");          XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1234");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234");        XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12345");        XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234.5");      XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234,567.89"); XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-
-    maskVal = pictureMask.setMask("{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check(".0");           XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check(".01");          XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check(".012");         XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-
-    maskVal = pictureMask.setMask("{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234E2");      XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234E+20");    XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234E-30");    XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-
-//  maskVal = pictureMask.setMask("[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]")
-    maskVal = pictureMask.setMask("{#[#][#]{*#}[.*#]}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("123");  XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1234");  XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("12345");  XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-
-    maskVal = pictureMask.setMask("{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}")
-    XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234");        XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234.0");      XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234E-30");    XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("(1,234E-30)");  XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
-    retVal = pictureMask.check("1,234.0E01");   XCTAssert(retVal.status == .Ok,    retVal.errMsg ?? "")
+    retVal = pictureMask.check("0..0");         XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("0.0.");         XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check(".0");           XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check(".01");          XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check(".012");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1E0");          XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-1E0");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1E-0");         XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-1E-0");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-0E-0");        XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-0.E-0");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("-0.E-0.");      XCTAssert(retVal.status == .NotOk,   retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234E1");       XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234E+12");     XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1234E-123");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234E1");      XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234E+12");    XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
+    retVal = pictureMask.check("1,234E-123");   XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
   }
 
   func test_examples_icd_9_or_10() {
@@ -725,6 +746,7 @@ class NBPictureMaskTests: XCTestCase {
 
     maskVal = pictureMask.setMask("{X{X},Z{Z},{#,&}#{#,&}.[#,&][#,&][#,&][#,&]}")
     XCTAssert(maskVal.errMsg == nil, maskVal.errMsg ?? "")
+    retVal = pictureMask.check("");             XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("X");            XCTAssert(retVal.status == .OkSoFar, retVal.errMsg ?? "")
     retVal = pictureMask.check("XX");           XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")
     retVal = pictureMask.check("ZZ");           XCTAssert(retVal.status == .Ok,      retVal.errMsg ?? "")

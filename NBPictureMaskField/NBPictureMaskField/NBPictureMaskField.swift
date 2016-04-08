@@ -11,19 +11,7 @@
 //  OVERVIEW
 //  --------
 //
-//  Mask -  This defines what the field will accept. Groups can be created
-//          inside { }. These letters indicate the following format:
-//
-//            d = digits 0..9
-//            D = anything other than 0..9
-//            a = a..z, A..Z
-//            W = anything other than a..z, A..Z
-//            . = anything (default)
-//
-//            Examples
-//            {dddd}-{DDDD}-{WaWa}-{aaaa}   would allow 0123-AbCd-0a2b-XxYy
-//
-//  Template -  This is used to fill in the mask for displaying.
+//  See NBPictureMask for description of the mask.
 //
 //==============================================================================
 
