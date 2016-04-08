@@ -63,9 +63,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     let str : String
 
     switch retVal.status {
-    case .Match :     str = "Match"
+    case .NotOk :     str = "Not ok"
     case .OkSoFar :   str = "Ok so far"
-    case .NotGood :   str = "Not good"
+    case .Ok :        str = "Ok"
     }
 
     inputStatusLabel.text = "\(str) \(retVal.errMsg ?? "")"

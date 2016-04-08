@@ -30,7 +30,7 @@
 //
 //  Each group...
 //
-//  The first group to match is the one.
+//  The first group to be ok is the one.
 //
 //  Optional Algorithm
 //  ------------------
@@ -103,17 +103,17 @@ class NBPictureMask {
     var nodes   : [Node] = [Node]()           // Child nodes (branches)
    }
 
-  enum MatchStatus {
+  enum OkStatus {
   //----------------------------------------------------------------------------
 
     case
-      NotGood,                                // The check has failed
+      NotOk,                                  // The check has failed
       OkSoFar,                                // The check is ok so far
-      Match                                   // It matches
+      Ok                                      // The check is ok
   }
 
   typealias MaskError = (index: Int, errMsg: String?)
-  typealias CheckResult = (index: Int, status: MatchStatus, errMsg: String?)
+  typealias CheckResult = (index: Int, status: OkStatus, errMsg: String?)
 
   //--------------------
   // MARK: - Variables
@@ -506,23 +506,7 @@ class NBPictureMask {
   //----------------------------------------------------------------------------
   // Check the text against the mask.
 
-    let tc = text.characters
-    //NSLog("CHECK Mask: '\(mask)' Text: '\(String(tc))'")
-
-    // Look at all possible combinations of optionals
-    let retVal = NBPictureMask.check(Array(tc), index: 0, node: rootNode)
-
-    switch retVal.status {
-    case .Match :
-      //NSLog("MATCH - Mask: '\(mask)' Text: '\(String(tc))'")
-      return (index: retVal.index, status: .Match, errMsg: nil)
-    case .OkSoFar :
-      //NSLog("OK SO FAR -  Mask: '\(mask)' Text: '\(String(tc))'")
-      return (index: 0, status: .OkSoFar, errMsg: nil)
-    case .NotGood :
-      //NSLog("NOT GOOD -  Mask: '\(mask)' Text: '\(String(tc))'")
-      return (index: 0, status: .NotGood, errMsg: "No match")
-    }
+    return NBPictureMask.check(Array(text.characters), index: 0, node: rootNode)
   }
 
   private class func check(text: [Character], index: Int, node: Node) -> CheckResult {
@@ -539,6 +523,8 @@ class NBPictureMask {
   //    isOk    If check is currently ok otherwise false
   //    errMsg  nil if everything is ok otherwise an isOk    True
 
+    NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
+
     var i = index
 
     //--------------------
@@ -552,9 +538,9 @@ class NBPictureMask {
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isDigit( text[i] ) {
-        return( i+1, .Match, nil)
+        return( i+1, .Ok, nil)
       } else {
-        return( i, .NotGood, "Not a digit")
+        return( i, .NotOk, "Not a digit")
       }
 
     //--------------------
@@ -564,9 +550,9 @@ class NBPictureMask {
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
-        return( i+1, .Match, nil)
+        return( i+1, .Ok, nil)
       } else {
-        return( i, .NotGood, "Not a letter")
+        return( i, .NotOk, "Not a letter")
       }
 
     //--------------------
@@ -576,9 +562,9 @@ class NBPictureMask {
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
-        return( i+1, .Match, nil)
+        return( i+1, .Ok, nil)
       } else {
-        return( i, .NotGood, "Not a letter")
+        return( i, .NotOk, "Not a letter")
       }
 
     //--------------------
@@ -588,9 +574,9 @@ class NBPictureMask {
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if isLetter( text[i] ) {
-        return( i+1, .Match, nil)
+        return( i+1, .Ok, nil)
       } else {
-        return( i, .NotGood, "Not a letter")
+        return( i, .NotOk, "Not a letter")
       }
 
     //--------------------
@@ -599,7 +585,7 @@ class NBPictureMask {
 
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
-      return( i+1, .Match, nil)
+      return( i+1, .Ok, nil)
 
     //--------------------
 
@@ -607,7 +593,7 @@ class NBPictureMask {
 
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
-      return( i+1, .Match, nil)
+      return( i+1, .Ok, nil)
 
     //--------------------
 
@@ -616,219 +602,147 @@ class NBPictureMask {
       guard i < text.count else { return( i, .OkSoFar, nil) }
 
       if text[i] == node.literal {
-        return( i+1, .Match, nil)
+        return( i+1, .Ok, nil)
       } else {
-        return( i, .NotGood, "Not a match")
+        return( i, .NotOk, "Not ok")
       }
 
     //--------------------
     // Root node
+    // Example: # or ## or #[#] or {#,&}
 
     case .Root :
 
-      var status: MatchStatus = .OkSoFar
-
       for n in 0 ..< node.nodes.count {
-
         let retVal = check(text, index: i, node: node.nodes[n])
-        //NSLog("Root - \(retVal.index) \(NBPictureMask.lastDot(String(retVal.status)))")
         i = retVal.index
-        status = retVal.status
-
-        switch status {
-        case .Match :
-          break;
-        case .OkSoFar :
-          if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
-        case .NotGood :
-          return retVal
+        switch retVal.status {
+        case .Ok :          break;            // Continue while everything is ok
+        case .OkSoFar :     return retVal     // No more text
+        case .NotOk :       return retVal     // Problem
         }
-
       }
 
-      //--------------------
-      // Final determination
-
-      switch status {
-      case .Match :
-        if i < text.count { return(i, .NotGood, "No match") }   // Too much input
-        return(i, .Match, nil)
-      case .OkSoFar :
-        if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
-        return(i, .NotGood, "No match")
-      case .NotGood :
-        return(i, .NotGood, "No match")
-      }
+      // No more mask
+      if i == text.count  { return(i, .Ok, nil) }           // Mask and text match
+      else                { return(i, .NotOk, "Not ok") }   // More text than mask
 
     //--------------------
+    // Repeat *# or *2# or *2[#]
 
     case .Repeat :
 
-      var retVal : CheckResult
+      var loopCount = node.value
 
-      for n in 0 ..< node.nodes.count {
+      while loopCount >= 0 {
 
-        var cnt = 0
-        repeat {
+        let startIndex = i
 
-          if i == text.count {
-            if node.value == 0 {
-              return(i, .Match, nil)    // Repeat matched to the end of the input
-            } else {
-              return(i, .NotGood, "Repeat is longer than the input")
-            }
-          }
-
-          retVal = check(text, index: i, node: node.nodes[n])
-          //NSLog("Repeat - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
-
-          switch retVal.status {
-          // If everything matched then go with that
-          case .Match :
-            i = retVal.index
-          // If index advanced then something matched up to that point
-          case .OkSoFar :
-            // Not advancing so stop repeating
-            if i == retVal.index {
-              return( retVal.index, retVal.status, retVal.errMsg)
-            }
-            i = retVal.index
-          case .NotGood :
-            return( retVal.index, retVal.status, retVal.errMsg)
-          }
-
-          cnt += 1
-
-        } while cnt < node.value || node.value == 0
-
-        // If we make it to the end then result is most recent outcome
-        if retVal.status == .NotGood {
-          return( retVal.index, retVal.status, retVal.errMsg)
+        // No more input
+        if i == text.count {
+          if loopCount == 0 { return(i, .Ok, nil) }    // Repeat Oked to the end of the input OR no count specified
+          else              { return(i, .NotOk, "Repeat is longer than the input") }
         }
+
+        for n in 0 ..< node.nodes.count {
+          let retVal = check(text, index: i, node: node.nodes[n])
+          NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+          i = retVal.index
+          switch retVal.status {
+          case .Ok :          break;            // Continue while everything is ok
+          case .OkSoFar :     return retVal     // No more text
+          case .NotOk :       return retVal     // Problem
+          }
+        }
+
+        // No more mask
+
+        // Repeat did not advance and this can only happen if everything was optional
+        if i == startIndex { return(i, .Ok, nil) }
+
+        if loopCount == 0 { continue }          // Special case repeats until end of text
+        loopCount -= 1
+        if loopCount == 0 { break }
       }
 
-      //--------------------
-      // Final determination
+      // No more loops
 
-      if i == text.count {
-        return( i, .Match, nil)
-      } else if i < text.count {
-        return( i, .OkSoFar, nil)
-      } else {
-        return( i, .NotGood, "No match")
-      }
+      return(i, .Ok, nil)                     // Mask and text up to this point match
 
     //--------------------
+    // Grouping {} or {#} or {#,?} or {R,G,B}
     // Check all groupings from the same text positon.
-    // The first match wins.
+    // The first Ok wins.
 
     case .Grouping :
 
       for n in 0 ..< node.nodes.count {
-
         let retVal = check(text, index: i, node: node.nodes[n])
-        //NSLog("Grouping - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
-
-        // Return on the first match
-
+        NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
-        case .Match,
-             .OkSoFar :
-          return( retVal.index, retVal.status, retVal.errMsg)
-        default :
-          break;
+        case .Ok :          return retVal     // Match first ok group
+        case .OkSoFar :     return retVal     // Match first ok so far group    // NOTE - might consider continuing search
+        case .NotOk :       break             // Try next group
         }
       }
 
-      return( i, .NotGood, "No match")
+      // No more mask
+      return(i, .NotOk, "Not ok")             // More text than mask
+      // return(i, .OkSoFar, nil)             // NOTE - might consider returning first "OkSoFar"
 
     //--------------------
 
     case .GroupingEnd :
 
-      return( i, .NotGood, "Grouping End syntax error")
+      return( i, .NotOk, "Grouping End syntax error")
 
     //--------------------
+    // Group inside grouping or optional
+    // Example: # or ## or A#
 
     case .Group :
 
-      var status: MatchStatus = .OkSoFar
-
       for n in 0 ..< node.nodes.count {
-
         let retVal = check(text, index: i, node: node.nodes[n])
-        //NSLog("Group - text[\(retVal.index)] \(NBPictureMask.lastDot(String(retVal.status)))")
+        NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         i = retVal.index
-        status = retVal.status
-
-        switch status {
-        case .Match :
-          break;
-        case .OkSoFar :
-          if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
-        case .NotGood :
-          return retVal
+        switch retVal.status {
+        case .Ok :          break;            // Continue while everything is ok
+        case .OkSoFar :     return retVal     // No more text
+        case .NotOk :       return retVal     // Problem
         }
-
       }
 
-      //--------------------
-      // Final determination
-
-      switch status {
-      case .Match :
-        if i < text.count { return(i, .OkSoFar, nil) }          // Still some input to go
-        return(i, .Match, nil)
-      case .OkSoFar :
-        if i == text.count { return(i, .OkSoFar, nil) }         // More input could be accepted
-        return(i, .NotGood, "No match")
-      case .NotGood :
-        return(i, .NotGood, "No match")
-      }
-
-/*
-      if i == text.count {
-        return( i, .Match, nil)
-      } else if i < text.count {
-        return( i, .OkSoFar, nil)
-      } else {
-        return( i, .NotGood, "No match")
-      }
-*/
+      // No more mask
+      return(i, .Ok, nil)                     // Mask and text up to this point match
 
     //--------------------
-    // Return on the first match
+    // Optional [] or [#] or [#,?] or [R,G,B]
+    // Return on the first ok
 
     case .Optional :
 
+      guard i < text.count else { return( i, .Ok, nil) }    // Optional not needed if no text
+
       for n in 0 ..< node.nodes.count {
         let retVal = check(text, index: i, node: node.nodes[n])
+        NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
-        case .Match :
-          return(retVal.index, retVal.status, retVal.errMsg)
-        case .OkSoFar :
-          return(retVal.index, .Match, retVal.errMsg)             // Ok so far so make consider it matched
-        case .NotGood :
-          break;
+        case .Ok :          return retVal     // Match first ok group
+        case .OkSoFar :     return retVal     // Match first ok so far group    // NOTE - might consider continuing search
+        case .NotOk :       break             // Try next group
         }
       }
 
-      //--------------------
-      // Final determination
-
-      if i == text.count {
-        return( i, .Match, nil)
-      } else if i < text.count {
-        return( i, .OkSoFar, nil)
-      } else {
-        return( i, .NotGood, "No match")
-      }
+      // No more mask
+      return(i, .Ok, nil)                     // Does not have to match
+      // return(i, .OkSoFar, nil)             // NOTE - might consider returning first "OkSoFar"
 
     //--------------------
 
     case .OptionalEnd :
 
-      return( i, .NotGood, "Optional End syntax error")
+      return( i, .NotOk, "Optional End syntax error")
 
     }
 
