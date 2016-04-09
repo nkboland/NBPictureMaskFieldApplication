@@ -15,6 +15,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
   @IBOutlet weak var maskTextField: UITextField!
   @IBOutlet weak var inputStatusLabel: UILabel!
   @IBOutlet weak var inputTextField: NBPictureMaskField!
+  @IBOutlet weak var enforceMaskSwitch: UISwitch!
   @IBOutlet weak var autoFillSwitch: UISwitch!
   @IBOutlet weak var maskTreeLabel: UILabel!
 
@@ -29,15 +30,40 @@ class ViewController: UIViewController, UITextFieldDelegate {
     // We need to update things when field is edited
     maskTextField.delegate = self
 
-    // Reflect current input mask value
-    maskTextField.text = inputTextField.mask
+    // Load defaults
+    loadDefaults(self)
+
+    // Update any changes
     maskFieldEditingChanged(maskTextField)
+    textFieldEditingChanged(inputTextField)
   }
 
   override func didReceiveMemoryWarning() {
   //----------------------------------------------------------------------------
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+
+  func loadDefaults(sender: AnyObject) {
+  //----------------------------------------------------------------------------
+    let defaults = NSUserDefaults.standardUserDefaults()
+    enforceMaskSwitch.on = defaults.boolForKey("enforceMaskSwitch")
+    autoFillSwitch.on = defaults.boolForKey("autoFillSwitch")
+    maskTextField.text = defaults.stringForKey("maskTextField")
+    inputTextField.text = defaults.stringForKey("inputTextField")
+
+    inputTextField.enforceMask = enforceMaskSwitch.on
+  }
+
+  @IBAction func saveDefaults(sender: AnyObject) {
+  //----------------------------------------------------------------------------
+    let defaults = NSUserDefaults.standardUserDefaults()
+    defaults.setBool(enforceMaskSwitch.on, forKey: "enforceMaskSwitch")
+    defaults.setBool(autoFillSwitch.on, forKey: "autoFillSwitch")
+    defaults.setObject(maskTextField.text, forKey: "maskTextField")
+    defaults.setObject(inputTextField.text, forKey: "inputTextField")
+
+    inputTextField.enforceMask = enforceMaskSwitch.on
   }
 
   @IBAction func maskFieldEditingChanged(sender: AnyObject) {
@@ -52,6 +78,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
 
     maskStatusLabel.text = errMsg ?? "Mask ok"
     maskTreeLabel.text = inputTextField.maskTreeToString
+
+    saveDefaults(sender)
   }
 
   @IBAction func textFieldEditingChanged(sender: AnyObject) {
@@ -63,12 +91,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
     let str : String
 
     switch retVal.status {
-    case .NotOk :     str = "Not ok"
+    case .NotOk :     str = "Error: \(retVal.errMsg ?? "")"
     case .OkSoFar :   str = "Ok so far"
     case .Ok :        str = "Ok"
     }
 
-    inputStatusLabel.text = "\(str) \(retVal.errMsg ?? "")"
+    inputStatusLabel.text = str
+
+    saveDefaults(sender)
   }
 
   func dismissKeyboard() {

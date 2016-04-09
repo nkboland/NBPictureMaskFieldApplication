@@ -44,6 +44,8 @@ class NBPictureMaskTestStatus: XCTestCase {
     maskVal = pictureMask.setMask("{]");    XCTAssertNotNil(maskVal.errMsg)
     maskVal = pictureMask.setMask("{}");    XCTAssertNotNil(maskVal.errMsg)
     maskVal = pictureMask.setMask("[]");    XCTAssertNotNil(maskVal.errMsg)
+    maskVal = pictureMask.setMask(",");     XCTAssertNotNil(maskVal.errMsg)
+    maskVal = pictureMask.setMask("#,&");   XCTAssertNotNil(maskVal.errMsg)
     maskVal = pictureMask.setMask("{,}");   XCTAssertNotNil(maskVal.errMsg)
     maskVal = pictureMask.setMask("{*}");   XCTAssertNotNil(maskVal.errMsg)
     maskVal = pictureMask.setMask("{[*]}"); XCTAssertNotNil(maskVal.errMsg)
@@ -107,6 +109,48 @@ class NBPictureMaskTestStatus: XCTestCase {
   }
 
   func test_literal() {
+  //----------------------------------------------------------------------------
+
+    let pictureMask = NBPictureMask()
+    var maskVal: NBPictureMask.MaskResult
+    var retVal: NBPictureMask.CheckResult
+
+    maskVal = pictureMask.setMask(";#")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check("#");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("##");       XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask(";;")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(";");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check(";;");       XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask(";,")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("A");        XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check(",A");       XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask(";#;&")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("#");        XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check("#&");       XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("&#");       XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask(";[;]")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("[");        XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check("[]");       XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("[[");       XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("[}");       XCTAssert(retVal.status == .NotOk)
+  }
+
+  func test_simple() {
   //----------------------------------------------------------------------------
 
     let pictureMask = NBPictureMask()

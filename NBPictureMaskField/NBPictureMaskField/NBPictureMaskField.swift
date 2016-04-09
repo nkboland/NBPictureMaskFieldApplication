@@ -13,6 +13,19 @@
 //
 //  See NBPictureMask for description of the mask.
 //
+//  Storyboard Attributes:
+//
+//    mask
+//
+//  Class Variables:
+//
+//    maskErrorMessage
+//    maskTreeToString
+//
+//  Class Functions:
+//
+//    check()
+//
 //==============================================================================
 
 import UIKit
@@ -27,9 +40,12 @@ class NBPictureMaskField: UITextField {
   var maskErrMsg: String?
   var nbPictureMask : NBPictureMask!
 
+  private var _enforceMask: Bool
+
   required init?(coder aDecoder: NSCoder) {
   //----------------------------------------------------------------------------
     nbPictureMask = NBPictureMask()
+    _enforceMask = true
     super.init(coder: aDecoder)
   }
 
@@ -68,6 +84,12 @@ class NBPictureMaskField: UITextField {
     get {
       return nbPictureMask.maskTreeToString()
     }
+  }
+
+  var enforceMask: Bool {
+  //----------------------------------------------------------------------------
+    get { return _enforceMask }
+    set { _enforceMask = newValue }
   }
 
   func check(text: String) -> NBPictureMask.CheckResult {
@@ -120,22 +142,27 @@ extension NBPictureMaskField: UITextFieldDelegate {
   func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
   //----------------------------------------------------------------------------
 
-    NSLog("TextField text:\(textField.text) range:\(range) string:\(string)")
-
     let currentText = textField.text ?? ""
-    let prospectiveText = (currentText as NSString).stringByReplacingCharactersInRange(range, withString: string)
-    NSLog("TextField prospectiveText:\(prospectiveText)")
 
-    return true
-/*
+    NSLog("=======================")
+    NSLog("TextField text:'\(currentText)' range:\(range) string:'\(string)'")
+
+    let prospectiveText = (currentText as NSString).stringByReplacingCharactersInRange(range, withString: string)
+    NSLog("TextField prospectiveText:'\(prospectiveText)'")
+
+    guard enforceMask else { return true }
+
+    // Enforce the mask
+
     let retVal = nbPictureMask.check(prospectiveText)
 
-    if retVal.status == .Match {
-      return true
-    } else {
+    switch retVal.status {
+    case .Ok,
+         .OkSoFar :
+      textField.text = retVal.text
+      return false
+    case .NotOk :
       return false
     }
-*/
   }
-
 }

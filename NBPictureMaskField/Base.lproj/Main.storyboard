@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="20" width="600" height="580"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="1sb-U0-hJR" userLabel="Main Stack View">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="296"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="347"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NBPictureMaskField" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zsT-xP-q5Q">
                                                 <rect key="frame" x="183" y="0.0" width="235" height="33"/>
@@ -53,7 +53,7 @@
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits"/>
                                                                 <connections>
-                                                                    <action selector="maskFieldEditingChanged:" destination="BYZ-38-t0r" eventType="editingChanged" id="agt-2R-gx0"/>
+                                                                    <action selector="maskFieldEditingChanged:" destination="BYZ-38-t0r" eventType="editingChanged" id="iqY-Ip-Rf3"/>
                                                                 </connections>
                                                             </textField>
                                                         </subviews>
@@ -88,19 +88,39 @@
                                                                 <rect key="frame" x="162" y="0.0" width="378" height="30"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits"/>
-                                                                <userDefinedRuntimeAttributes>
-                                                                    <userDefinedRuntimeAttribute type="string" keyPath="mask" value="#*#"/>
-                                                                </userDefinedRuntimeAttributes>
                                                                 <connections>
-                                                                    <action selector="textFieldEditingChanged:" destination="BYZ-38-t0r" eventType="editingChanged" id="pbX-0J-3Xe"/>
+                                                                    <action selector="textFieldEditingChanged:" destination="BYZ-38-t0r" eventType="editingChanged" id="IgQ-jM-cas"/>
                                                                 </connections>
                                                             </textField>
                                                         </subviews>
                                                     </stackView>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="asi-lZ-IeZ" userLabel="Auto Fill Stack View">
+                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ARD-BO-8ci" userLabel="Enforce Mask Stack View">
                                                 <rect key="frame" x="30" y="203" width="540" height="31"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enforce Mask" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VbO-wQ-B5V">
+                                                        <rect key="frame" x="0.0" y="5" width="152" height="21"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PSk-xe-viz">
+                                                        <rect key="frame" x="160" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="saveDefaults:" destination="BYZ-38-t0r" eventType="valueChanged" id="XRp-Ic-xbu"/>
+                                                        </connections>
+                                                    </switch>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JKw-Wl-guN">
+                                                        <rect key="frame" x="217" y="5" width="323" height="21"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="asi-lZ-IeZ" userLabel="Auto Fill Stack View">
+                                                <rect key="frame" x="30" y="254" width="540" height="31"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto Fill" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJ9-By-kCF">
                                                         <rect key="frame" x="0.0" y="5" width="152" height="21"/>
@@ -110,6 +130,9 @@
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="19r-jc-Ee6">
                                                         <rect key="frame" x="160" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="saveDefaults:" destination="BYZ-38-t0r" eventType="valueChanged" id="nmJ-6S-odq"/>
+                                                        </connections>
                                                     </switch>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fho-1v-N9l">
                                                         <rect key="frame" x="217" y="5" width="323" height="21"/>
@@ -120,7 +143,7 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="PR7-Vy-6qy" userLabel="Mask Tree Stack View">
-                                                <rect key="frame" x="30" y="254" width="540" height="42"/>
+                                                <rect key="frame" x="30" y="305" width="540" height="42"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mask Tree" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I6T-8Y-BNe">
                                                         <rect key="frame" x="0.0" y="0.0" width="540" height="17"/>
@@ -133,13 +156,10 @@
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
-                                                        <variation key="widthClass=regular" misplaced="YES">
-                                                            <rect key="frame" x="0.0" y="25" width="720" height="17"/>
-                                                        </variation>
                                                     </label>
                                                 </subviews>
                                                 <variation key="widthClass=regular" misplaced="YES">
-                                                    <rect key="frame" x="40" y="254" width="720" height="42"/>
+                                                    <rect key="frame" x="40" y="305" width="720" height="42"/>
                                                 </variation>
                                             </stackView>
                                         </subviews>
@@ -149,10 +169,12 @@
                                             <constraint firstItem="PVm-qv-1HB" firstAttribute="width" secondItem="po9-3k-tlA" secondAttribute="width" id="ImA-b5-tpP"/>
                                             <constraint firstItem="r8P-dG-jad" firstAttribute="width" secondItem="1sb-U0-hJR" secondAttribute="width" multiplier="0.9" id="WQ1-Rc-blN"/>
                                             <constraint firstItem="LgW-Qg-xwm" firstAttribute="width" secondItem="r8P-dG-jad" secondAttribute="width" id="bYP-Hn-S8a"/>
+                                            <constraint firstItem="ARD-BO-8ci" firstAttribute="width" secondItem="LgW-Qg-xwm" secondAttribute="width" id="eH0-Bp-Dre"/>
+                                            <constraint firstItem="VbO-wQ-B5V" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" id="gQn-SZ-Kis"/>
                                             <constraint firstItem="YJ9-By-kCF" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" priority="750" id="mEf-Kw-ULn"/>
                                         </constraints>
                                         <variation key="widthClass=regular" misplaced="YES">
-                                            <rect key="frame" x="0.0" y="0.0" width="800" height="296"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="800" height="347"/>
                                         </variation>
                                     </stackView>
                                 </subviews>
@@ -184,6 +206,7 @@
                     </view>
                     <connections>
                         <outlet property="autoFillSwitch" destination="19r-jc-Ee6" id="RVz-gc-ixU"/>
+                        <outlet property="enforceMaskSwitch" destination="PSk-xe-viz" id="rSm-yJ-Wgm"/>
                         <outlet property="inputStatusLabel" destination="KXr-KR-GmV" id="diE-zC-qLU"/>
                         <outlet property="inputTextField" destination="PVm-qv-1HB" id="hIu-hq-PSz"/>
                         <outlet property="maskStatusLabel" destination="EiK-78-Vnv" id="B1U-Bq-ExW"/>

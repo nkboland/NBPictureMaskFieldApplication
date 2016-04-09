@@ -62,6 +62,14 @@
 //  #####[-####]      Zipcode with optional plus four
 //  [+,-]#*#[.*#]     1, +1, +1., -1.0, 123.456
 //
+//  Other
+//  -----
+//
+//  Literal letters are automatically case converted. For example:
+//
+//  {Red,Yellow}      If the Input is "RED" the output is "Red"
+//
+//
 //  TO DO
 //  -----
 //
@@ -92,7 +100,7 @@ class NBPictureMask {
       Ok                                      // The check is ok
   }
 
-  typealias CheckResult = (index: Int, status: CheckStatus, errMsg: String?)
+  typealias CheckResult = (index: Int, status: CheckStatus, text: String, errMsg: String?)
   //--------------------
   // This is returned when checking the text.
 
@@ -149,6 +157,8 @@ class NBPictureMask {
     var nodes   : [Node] = [Node]()           // Child nodes (branches)
    }
 
+  private typealias ChkRslt = (index: Int, status: CheckStatus, errMsg: String?)
+
   //--------------------
   // MARK: - Variables
 
@@ -156,6 +166,7 @@ class NBPictureMask {
   private var text = [Character]()            // Input text
 
   private var rootNode = Node()               // Mask root node
+  private var newtext = [Character]()         // Text with mask changes applied
 
   //--------------------
   // MARK: - Helper Methods
@@ -181,22 +192,92 @@ class NBPictureMask {
     }
   }
 
-  class func isLower( c : Character ) -> Bool {
-  //----------------------------------------------------------------------------
-  // Returns true if characer is a..z otherwise false.
-
-    switch c {
-    case "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z": return true
-    default : return false
-    }
-  }
-
   class func isUpper( c : Character ) -> Bool {
   //----------------------------------------------------------------------------
   // Returns true if characer is A..Z, a..z otherwise false.
 
     switch c {
     case "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z": return true
+    default : return false
+    }
+  }
+
+  class func toUpper( c : Character ) -> Character {
+  //----------------------------------------------------------------------------
+  // Returns true if characer is a..z otherwise false.
+
+    switch c {
+    case "a" : return "A"
+    case "b" : return "B"
+    case "c" : return "C"
+    case "d" : return "D"
+    case "e" : return "E"
+    case "f" : return "F"
+    case "g" : return "G"
+    case "h" : return "H"
+    case "i" : return "I"
+    case "j" : return "J"
+    case "k" : return "K"
+    case "l" : return "L"
+    case "m" : return "M"
+    case "n" : return "N"
+    case "o" : return "O"
+    case "p" : return "P"
+    case "q" : return "Q"
+    case "r" : return "R"
+    case "s" : return "S"
+    case "t" : return "T"
+    case "u" : return "U"
+    case "v" : return "V"
+    case "w" : return "W"
+    case "x" : return "X"
+    case "y" : return "Y"
+    case "z" : return "Z"
+    default  : return c
+    }
+  }
+
+  class func toLower( c : Character ) -> Character {
+  //----------------------------------------------------------------------------
+  // Returns true if characer is a..z otherwise false.
+
+    switch c {
+    case "A" : return "a"
+    case "B" : return "b"
+    case "C" : return "c"
+    case "D" : return "e"
+    case "E" : return "e"
+    case "F" : return "f"
+    case "G" : return "g"
+    case "H" : return "h"
+    case "I" : return "i"
+    case "J" : return "j"
+    case "K" : return "k"
+    case "L" : return "l"
+    case "M" : return "m"
+    case "N" : return "n"
+    case "O" : return "o"
+    case "P" : return "p"
+    case "Q" : return "q"
+    case "R" : return "r"
+    case "S" : return "s"
+    case "T" : return "t"
+    case "U" : return "u"
+    case "V" : return "v"
+    case "W" : return "w"
+    case "X" : return "x"
+    case "Y" : return "y"
+    case "Z" : return "z"
+    default  : return c
+    }
+  }
+
+  class func isLower( c : Character ) -> Bool {
+  //----------------------------------------------------------------------------
+  // Returns true if characer is a..z otherwise false.
+
+    switch c {
+    case "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z": return true
     default : return false
     }
   }
@@ -536,10 +617,14 @@ class NBPictureMask {
   // Check the text against the mask.
 
     self.text = Array(text.characters)
-    return check(0, node: rootNode)
+    self.newtext = Array(text.characters)
+
+    let rslt = check(0, node: rootNode)
+
+    return (rslt.index, rslt.status, String(self.newtext), rslt.errMsg)
   }
 
-  private func check(index: Int, node: Node) -> CheckResult {
+  private func check(index: Int, node: Node) -> ChkRslt {
   //----------------------------------------------------------------------------
   // This checks the current text against the current mask (tree).
   //
@@ -598,6 +683,7 @@ class NBPictureMask {
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
       if NBPictureMask.isLetter( text[i] ) {
+        newtext[i] = NBPictureMask.toUpper(text[i])
         return(i+1, .Ok, nil)
       } else {
         return(i, .NotOk, "Not a letter")
@@ -610,6 +696,7 @@ class NBPictureMask {
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
       if NBPictureMask.isLetter( text[i] ) {
+        newtext[i] = NBPictureMask.toLower(text[i])
         return(i+1, .Ok, nil)
       } else {
         return(i, .NotOk, "Not a letter")
@@ -629,6 +716,7 @@ class NBPictureMask {
 
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
+      newtext[i] = NBPictureMask.toUpper(text[i])
       return(i+1, .Ok, nil)
 
     //--------------------
@@ -637,8 +725,13 @@ class NBPictureMask {
 
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
-      if text[i] == node.literal {
+      // Ignore case during the comparison
+      if NBPictureMask.toUpper(text[i]) == NBPictureMask.toUpper(node.literal) {
+        // Literal letters are automatically converted to the case presented in the mask
+        if NBPictureMask.isLetter(text[i]) { newtext[i] = node.literal }
         return(i+1, .Ok, nil)
+
+
       } else {
         return(i, .NotOk, "Not ok")
       }
@@ -713,7 +806,7 @@ class NBPictureMask {
 
     case .Grouping :
 
-      var retValOkSoFar : CheckResult?
+      var retValOkSoFar : ChkRslt?
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n])
@@ -763,7 +856,7 @@ class NBPictureMask {
 
       guard i < text.count else { return(i, .Ok, nil) }     // Optional not needed if no text
 
-      var retValOkSoFar : CheckResult?
+      var retValOkSoFar : ChkRslt?
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n])
