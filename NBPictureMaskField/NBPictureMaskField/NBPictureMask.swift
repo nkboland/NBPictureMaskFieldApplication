@@ -66,9 +66,11 @@
 //  -----
 //
 //  Literal letters are automatically case converted. For example:
-//
 //  {Red,Yellow}      If the Input is "RED" the output is "Red"
 //
+//  The space (' ') character is automatically matched to the next literal
+//  character. For example:
+//  (###) ###-####    Entered as <' '>123<' '><' '>456<' '>7890 gives "(123) 456-7890"
 //
 //  TO DO
 //  -----
@@ -167,6 +169,8 @@ class NBPictureMask {
 
   private var rootNode = Node()               // Mask root node
   private var newtext = [Character]()         // Text with mask changes applied
+
+  private var autoFill = false                // Text is automatically filled with literals
 
   //--------------------
   // MARK: - Helper Methods
@@ -298,6 +302,16 @@ class NBPictureMask {
     rootNode = Node()
     self.mask = Array(mask.characters)
     return parseMask(&rootNode )
+  }
+
+  func getAutoFill() -> Bool {
+  //----------------------------------------------------------------------------
+    return self.autoFill
+  }
+
+  func setAutoFill(autoFill: Bool) {
+  //----------------------------------------------------------------------------
+    self.autoFill = autoFill
   }
 
   private func parseMask(inout node: Node) -> MaskResult {
@@ -725,13 +739,15 @@ class NBPictureMask {
 
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
+      // Space matches all literal characters
+      if text[i] == " " {
+        newtext[i] = node.literal
+        return(i+1, .Ok, nil)
       // Ignore case during the comparison
-      if NBPictureMask.toUpper(text[i]) == NBPictureMask.toUpper(node.literal) {
+      } else if NBPictureMask.toUpper(text[i]) == NBPictureMask.toUpper(node.literal) {
         // Literal letters are automatically converted to the case presented in the mask
         if NBPictureMask.isLetter(text[i]) { newtext[i] = node.literal }
         return(i+1, .Ok, nil)
-
-
       } else {
         return(i, .NotOk, "Not ok")
       }

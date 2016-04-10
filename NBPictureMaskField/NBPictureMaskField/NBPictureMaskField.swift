@@ -59,31 +59,29 @@ class NBPictureMaskField: UITextField {
 
   @IBInspectable var mask: String {
   //----------------------------------------------------------------------------
-    get {
-      return nbPictureMask.getMask()
-    }
+    get { return nbPictureMask.getMask() }
     set {
       let retVal = nbPictureMask.setMask(newValue)
       maskErrMsg = retVal.errMsg
     }
   }
 
+  @IBInspectable var autoFill: Bool {
+  //----------------------------------------------------------------------------
+    get { return nbPictureMask.getAutoFill() }
+    set { nbPictureMask.setAutoFill(newValue) }
+  }
+
   var maskErrorMessage: String? {
   //----------------------------------------------------------------------------
   // Returns the error message for the current mask, otherwise nil.
-
-    get {
-      return maskErrMsg
-    }
+    get { return maskErrMsg }
   }
 
   var maskTreeToString: String {
   //----------------------------------------------------------------------------
   // Returns the parsed mask tree as a string.
-
-    get {
-      return nbPictureMask.maskTreeToString()
-    }
+    get { return nbPictureMask.maskTreeToString() }
   }
 
   var enforceMask: Bool {

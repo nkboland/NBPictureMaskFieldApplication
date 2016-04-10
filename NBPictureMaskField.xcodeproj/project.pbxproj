@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0107BAD31CB8320C00F56ACB /* NBPictureMaskTestText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */; };
+		014700931CBB093300FABFBB /* NBPictureMaskTestAutoFill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014700921CBB093300FABFBB /* NBPictureMaskTestAutoFill.swift */; };
 		01BC3BEA1CA82B290074BC38 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3BE91CA82B290074BC38 /* AppDelegate.swift */; };
 		01BC3BEC1CA82B290074BC38 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BC3BEB1CA82B290074BC38 /* ViewController.swift */; };
 		01BC3BEF1CA82B290074BC38 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01BC3BED1CA82B290074BC38 /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTestText.swift; sourceTree = "<group>"; };
+		014700921CBB093300FABFBB /* NBPictureMaskTestAutoFill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NBPictureMaskTestAutoFill.swift; sourceTree = "<group>"; };
 		01BC3BE61CA82B290074BC38 /* NBPictureMaskField.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NBPictureMaskField.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01BC3BE91CA82B290074BC38 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		01BC3BEB1CA82B290074BC38 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			children = (
 				01BC3C0E1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift */,
 				0107BAD21CB8320C00F56ACB /* NBPictureMaskTestText.swift */,
+				014700921CBB093300FABFBB /* NBPictureMaskTestAutoFill.swift */,
 				01BC3C001CA82B2A0074BC38 /* Info.plist */,
 			);
 			path = NBPictureMaskFieldTests;
@@ -226,6 +229,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				014700931CBB093300FABFBB /* NBPictureMaskTestAutoFill.swift in Sources */,
 				01BC3C0F1CA8323A0074BC38 /* NBPictureMaskTestStatus.swift in Sources */,
 				0107BAD31CB8320C00F56ACB /* NBPictureMaskTestText.swift in Sources */,
 			);

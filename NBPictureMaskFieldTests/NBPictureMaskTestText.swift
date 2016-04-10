@@ -292,4 +292,32 @@ class NBPictureMaskTestText: XCTestCase {
     retVal = pictureMask.check("1a-123a");  XCTAssert(retVal.status == .Ok);      XCTAssert(retVal.text == "1A-123A")
   }
 
+  func test_space_fill() {
+  //----------------------------------------------------------------------------
+
+    let pictureMask = NBPictureMask()
+    var maskVal: NBPictureMask.MaskResult
+    var retVal: NBPictureMask.CheckResult
+
+    maskVal = pictureMask.setMask("(###) ###-####")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");               XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "")
+    retVal = pictureMask.check("(");              XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(")
+    retVal = pictureMask.check(" ");              XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(")
+    retVal = pictureMask.check("(123");           XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123")
+    retVal = pictureMask.check(" 123");           XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123")
+    retVal = pictureMask.check(" 123  456 ");     XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123) 456-")
+    retVal = pictureMask.check(" 123  456 7890"); XCTAssert(retVal.status == .Ok);      XCTAssert(retVal.text == "(123) 456-7890")
+
+    maskVal = pictureMask.setMask("[(###) ]###-####")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");               XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "")
+    retVal = pictureMask.check("(");              XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(")
+    retVal = pictureMask.check(" ");              XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(")
+    retVal = pictureMask.check("(123");           XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123")
+    retVal = pictureMask.check(" 123");           XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123")
+    retVal = pictureMask.check(" 123  456 ");     XCTAssert(retVal.status == .OkSoFar); XCTAssert(retVal.text == "(123) 456-")
+    retVal = pictureMask.check(" 123  456 7890"); XCTAssert(retVal.status == .Ok);      XCTAssert(retVal.text == "(123) 456-7890")
+  }
+
 }
