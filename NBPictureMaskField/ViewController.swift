@@ -64,6 +64,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     defaults.setObject(inputTextField.text, forKey: "inputTextField")
 
     inputTextField.enforceMask = enforceMaskSwitch.on
+    inputTextField.autoFill = autoFillSwitch.on
   }
 
   @IBAction func maskFieldEditingChanged(sender: AnyObject) {

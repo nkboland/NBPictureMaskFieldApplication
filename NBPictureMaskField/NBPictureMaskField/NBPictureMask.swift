@@ -77,7 +77,6 @@
 //
 //  1. Auto fill implementation.
 //  2. Text checking error message.
-//  3. Capitalization and text replacement.
 //
 //==============================================================================
 
@@ -102,9 +101,10 @@ class NBPictureMask {
       Ok                                      // The check is ok
   }
 
-  typealias CheckResult = (index: Int, status: CheckStatus, text: String, errMsg: String?)
+  typealias CheckResult = (status: CheckStatus, text: String, errMsg: String?, autoFillOffset: Int)
   //--------------------
   // This is returned when checking the text.
+  // autoFillOffset - number of characters added with autofill
 
   //--------------------
   // MARK: - Constants
@@ -626,18 +626,6 @@ class NBPictureMask {
     }
   }
 
-  func check(text: String) -> CheckResult {
-  //----------------------------------------------------------------------------
-  // Check the text against the mask.
-
-    self.text = Array(text.characters)
-    self.newtext = Array(text.characters)
-
-    let rslt = check(0, node: rootNode)
-
-    return (rslt.index, rslt.status, String(self.newtext), rslt.errMsg)
-  }
-
   private func check(index: Int, node: Node) -> ChkRslt {
   //----------------------------------------------------------------------------
   // This checks the current text against the current mask (tree).
@@ -736,6 +724,13 @@ class NBPictureMask {
     //--------------------
 
     case .Literal :
+
+      if i == text.count {
+        if autoFill {
+          text.append(node.literal)
+          newtext.append(node.literal)
+        }
+      }
 
       guard i < text.count else { return(i, .OkSoFar, nil) }
 
@@ -896,6 +891,84 @@ class NBPictureMask {
 
     }
 
+  }
+
+  func check(text: String) -> CheckResult {
+  //----------------------------------------------------------------------------
+  // Check the text against the mask.
+  //
+  // NOTE - autoFill cannot be done here because it is not known whether
+  //        if new text was being inserted, deleted, or appended.
+
+    self.text = Array(text.characters)
+    self.newtext = Array(text.characters)
+
+    let rslt = check(0, node: rootNode)
+
+    return (rslt.status, String(self.newtext), rslt.errMsg, 0)
+  }
+
+  func check(text: String, mask: String) -> CheckResult {
+  //----------------------------------------------------------------------------
+  // Check the text against the mask.
+
+    self.setMask(mask)
+    self.text = Array(text.characters)
+    self.newtext = Array(text.characters)
+
+    let rslt = check(0, node: rootNode)
+
+    return (rslt.status, String(self.newtext), rslt.errMsg, 0)
+  }
+
+  func check(text: String, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> CheckResult {
+  //----------------------------------------------------------------------------
+  // Check the text against the mask.
+
+    let prospectiveText = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+    NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
+    NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
+
+    let isAppending: Bool
+
+    if range.location >= text.characters.count {
+      isAppending = true
+      NSLog("Appending")
+    } else if range.length == 0 {
+      isAppending = false
+      NSLog("Inserting")
+    } else if range.length == string.characters.count {
+      isAppending = false
+      NSLog("Replace")
+    } else if range.length > string.characters.count {
+      isAppending = false
+      NSLog("Replace and reduce")
+    } else if range.length < string.characters.count {
+      isAppending = false
+      NSLog("Replace and increase")
+    } else {
+      isAppending = false
+      NSLog("Something not considered")
+    }
+
+    // Only autofill when appending
+    // NOTE - need to know how many characters!
+
+    let prevAutoFill = autoFill
+    if !isAppending { autoFill = false }
+
+    var checkResult = check(prospectiveText)
+
+    // Autofill needs to figure out how many characters were added to the end
+
+    if isAppending {
+      let autoFillOffset = (checkResult.text.characters.count - text.characters.count) - string.characters.count
+      checkResult.autoFillOffset = autoFillOffset
+    }
+
+    autoFill = prevAutoFill
+
+    return checkResult
   }
 
 }

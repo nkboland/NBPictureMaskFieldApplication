@@ -137,8 +137,54 @@ extension NBPictureMaskField: UITextFieldDelegate {
 
   }
 
+
   func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
   //----------------------------------------------------------------------------
+
+
+/*
+UITextFieldTextDidChangeNotification
+
+func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    let beginning = textField.beginningOfDocument
+    let start = textField.positionFromPosition(beginning, offset:range.location)
+    let end = textField.positionFromPosition(start!, offset:range.length)
+    let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
+    let cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
+
+// just used same text, use whatever you want :)
+    textField.text = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
+
+    let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
+    let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
+    textField.selectedTextRange = newSelectedRange
+
+    return false
+}
+
+*/
+  guard enforceMask else { return true }
+
+  // Save positions
+  let beginning = textField.beginningOfDocument
+  let start = textField.positionFromPosition(beginning, offset:range.location)
+//let end = textField.positionFromPosition(start!, offset:range.length)
+//let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
+  var cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
+
+  let checkResult = nbPictureMask.check(textField.text ?? "", shouldChangeCharactersInRange: range, replacementString: string)
+
+  guard checkResult.status != .NotOk else { return false }
+
+  textField.text = checkResult.text
+  cursorOffset += checkResult.autoFillOffset
+  let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
+  let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
+  textField.selectedTextRange = newSelectedRange
+
+  return false
+
+/*
 
     let currentText = textField.text ?? ""
 
@@ -162,5 +208,8 @@ extension NBPictureMaskField: UITextFieldDelegate {
     case .NotOk :
       return false
     }
+*/
+
   }
+
 }
