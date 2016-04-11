@@ -67,6 +67,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
     inputTextField.autoFill = autoFillSwitch.on
   }
 
+  @IBAction func maskButtonAction(sender: AnyObject) {
+  //----------------------------------------------------------------------------
+    let button = sender as! UIButton
+    inputTextField.text = ""
+    maskTextField.text = button.titleLabel?.text
+    maskFieldEditingChanged(maskTextField)
+  }
+
+
   @IBAction func maskFieldEditingChanged(sender: AnyObject) {
   //----------------------------------------------------------------------------
   // Update lots of things when the mask changes.

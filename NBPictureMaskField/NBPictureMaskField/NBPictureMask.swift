@@ -729,6 +729,7 @@ class NBPictureMask {
         if autoFill {
           text.append(node.literal)
           newtext.append(node.literal)
+NSLog("Autofill \(String(text))")
         }
       }
 
