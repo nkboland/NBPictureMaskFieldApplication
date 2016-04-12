@@ -77,6 +77,9 @@
 //
 //  1. Auto fill implementation.
 //  2. Text checking error message.
+//  3. Validate on exit
+//  4. Validate during entry
+//  5. Allow illegal values during entry
 //
 //==============================================================================
 
@@ -626,25 +629,26 @@ class NBPictureMask {
     }
   }
 
-  private func check(index: Int, node: Node) -> ChkRslt {
+  private func check(index: Int, node: Node, inout fillFlag: Bool) -> ChkRslt {
   //----------------------------------------------------------------------------
   // This checks the current text against the current mask (tree).
   //
   //  Gobal Inputs:
-  //    mask    Mask being parsed
-  //    text    Text being analyzed
+  //    mask      Mask being parsed
+  //    text      Text being analyzed
   //
   //  Parameter Inputs:
-  //    index   Index into the text currently being examined
-  //    node    Node in mask to be used for checking the text at index
+  //    index     Index into the text currently being examined
+  //    node      Node in mask to be used for checking the text at index
+  //    fillFlag  Auto fillFlag is enabled until special character encountered
   //
   //  Global Outputs:
-  //    newtext Text with mask changes applied
+  //    newtext   Text with mask changes applied
   //
   // Returns:
-  //    index   Next index into the text that should be examined
-  //    status  Ok, OkSoFar, or NotOk
-  //    errMsg  nil if everything is ok otherwise an isOk    True
+  //    index     Next index into the text that should be examined
+  //    status    Ok, OkSoFar, or NotOk
+  //    errMsg    nil if everything is ok otherwise an isOk    True
 
     //NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
 
@@ -658,7 +662,11 @@ class NBPictureMask {
 
     case .Digit :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       if NBPictureMask.isDigit( text[i] ) {
         return(i+1, .Ok, nil)
@@ -670,7 +678,11 @@ class NBPictureMask {
 
     case .Letter :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       if NBPictureMask.isLetter( text[i] ) {
         return(i+1, .Ok, nil)
@@ -682,7 +694,11 @@ class NBPictureMask {
 
     case .LetterToUpper :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       if NBPictureMask.isLetter( text[i] ) {
         newtext[i] = NBPictureMask.toUpper(text[i])
@@ -695,7 +711,11 @@ class NBPictureMask {
 
     case .LetterToLower :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       if NBPictureMask.isLetter( text[i] ) {
         newtext[i] = NBPictureMask.toLower(text[i])
@@ -708,7 +728,11 @@ class NBPictureMask {
 
     case .AnyChar :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       return(i+1, .Ok, nil)
 
@@ -716,7 +740,11 @@ class NBPictureMask {
 
     case .AnyCharToUpper :
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .OkSoFar, nil)
+      }
 
       newtext[i] = NBPictureMask.toUpper(text[i])
       return(i+1, .Ok, nil)
@@ -725,15 +753,19 @@ class NBPictureMask {
 
     case .Literal :
 
+      // No more input
       if i == text.count {
-        if autoFill {
+        if fillFlag {
           text.append(node.literal)
           newtext.append(node.literal)
-NSLog("Autofill \(String(text))")
+          //NSLog("Autofill \(String(text))")
         }
       }
 
-      guard i < text.count else { return(i, .OkSoFar, nil) }
+      // No more input (for real this time)
+      if i == text.count {
+        return(i, .OkSoFar, nil)
+      }
 
       // Space matches all literal characters
       if text[i] == " " {
@@ -755,7 +787,7 @@ NSLog("Autofill \(String(text))")
     case .Root :
 
       for n in 0 ..< node.nodes.count {
-        let retVal = check(i, node: node.nodes[n])
+        let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         i = retVal.index
         switch retVal.status {
         case .Ok :          break;            // Continue while everything is ok
@@ -781,12 +813,13 @@ NSLog("Autofill \(String(text))")
 
         // No more input
         if i == text.count {
+          fillFlag = false
           if loopCount == 0 { return(i, .Ok, nil) }    // Repeat Oked to the end of the input OR no count specified
           else              { return(i, .OkSoFar, nil) }
         }
 
         for n in 0 ..< node.nodes.count {
-          let retVal = check(i, node: node.nodes[n])
+          let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
           //NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
           i = retVal.index
           switch retVal.status {
@@ -818,10 +851,15 @@ NSLog("Autofill \(String(text))")
 
     case .Grouping :
 
+      // No more input
+      if i == text.count {
+          fillFlag = false
+      }
+
       var retValOkSoFar : ChkRslt?
 
       for n in 0 ..< node.nodes.count {
-        let retVal = check(i, node: node.nodes[n])
+        let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         //NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
@@ -847,7 +885,7 @@ NSLog("Autofill \(String(text))")
     case .Group :
 
       for n in 0 ..< node.nodes.count {
-        let retVal = check(i, node: node.nodes[n])
+        let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         //NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         i = retVal.index
         switch retVal.status {
@@ -866,12 +904,16 @@ NSLog("Autofill \(String(text))")
 
     case .Optional :
 
-      guard i < text.count else { return(i, .Ok, nil) }     // Optional not needed if no text
+      // No more input
+      if i == text.count {
+        fillFlag = false
+        return(i, .Ok, nil)                   // Optional not needed if no text
+      }
 
       var retValOkSoFar : ChkRslt?
 
       for n in 0 ..< node.nodes.count {
-        let retVal = check(i, node: node.nodes[n])
+        let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         //NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
@@ -904,7 +946,8 @@ NSLog("Autofill \(String(text))")
     self.text = Array(text.characters)
     self.newtext = Array(text.characters)
 
-    let rslt = check(0, node: rootNode)
+    var fillFlag = self.autoFill
+    let rslt = check(0, node: rootNode, fillFlag: &fillFlag)
 
     return (rslt.status, String(self.newtext), rslt.errMsg, 0)
   }
@@ -917,7 +960,8 @@ NSLog("Autofill \(String(text))")
     self.text = Array(text.characters)
     self.newtext = Array(text.characters)
 
-    let rslt = check(0, node: rootNode)
+    var fillFlag = self.autoFill
+    let rslt = check(0, node: rootNode, fillFlag: &fillFlag)
 
     return (rslt.status, String(self.newtext), rslt.errMsg, 0)
   }
@@ -927,33 +971,33 @@ NSLog("Autofill \(String(text))")
   // Check the text against the mask.
 
     let prospectiveText = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-    NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
-    NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
+    //NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
+    //NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
 
     let isAppending: Bool
 
     if range.location >= text.characters.count {
       isAppending = true
-      NSLog("Appending")
+      //NSLog("Appending")
     } else if range.length == 0 {
       isAppending = false
-      NSLog("Inserting")
+      //NSLog("Inserting")
     } else if range.length == string.characters.count {
       isAppending = false
-      NSLog("Replace")
+      //NSLog("Replace")
     } else if range.length > string.characters.count {
       isAppending = false
-      NSLog("Replace and reduce")
+      //NSLog("Replace and reduce")
     } else if range.length < string.characters.count {
       isAppending = false
-      NSLog("Replace and increase")
+      //NSLog("Replace and increase")
     } else {
       isAppending = false
-      NSLog("Something not considered")
+      //NSLog("Something not considered")
     }
 
     // Only autofill when appending
-    // NOTE - need to know how many characters!
+    // NOTE - need to know how many characters were added!
 
     let prevAutoFill = autoFill
     if !isAppending { autoFill = false }
