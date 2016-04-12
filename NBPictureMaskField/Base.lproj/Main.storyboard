@@ -191,7 +191,7 @@
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KJu-cc-YAM">
                                                                 <rect key="frame" x="160" y="0.0" width="380" height="30"/>
                                                                 <state key="normal">
-                                                                    <string key="title">{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}</string>
+                                                                    <string key="title">{{{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]]}</string>
                                                                 </state>
                                                                 <connections>
                                                                     <action selector="maskButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="4bX-Qv-L4P"/>
@@ -221,9 +221,6 @@
                                                         </subviews>
                                                     </stackView>
                                                 </subviews>
-                                                <variation key="widthClass=regular" misplaced="YES">
-                                                    <rect key="frame" x="40" y="305" width="720" height="107"/>
-                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="PR7-Vy-6qy" userLabel="Mask Tree Stack View">
                                                 <rect key="frame" x="30" y="432" width="540" height="42"/>
@@ -241,9 +238,6 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
-                                                <variation key="widthClass=regular" misplaced="YES">
-                                                    <rect key="frame" x="40" y="432" width="720" height="42"/>
-                                                </variation>
                                             </stackView>
                                         </subviews>
                                         <constraints>
@@ -257,9 +251,6 @@
                                             <constraint firstItem="VbO-wQ-B5V" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" id="gQn-SZ-Kis"/>
                                             <constraint firstItem="YJ9-By-kCF" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" priority="750" id="mEf-Kw-ULn"/>
                                         </constraints>
-                                        <variation key="widthClass=regular" misplaced="YES">
-                                            <rect key="frame" x="0.0" y="0.0" width="800" height="474"/>
-                                        </variation>
                                     </stackView>
                                 </subviews>
                                 <constraints>

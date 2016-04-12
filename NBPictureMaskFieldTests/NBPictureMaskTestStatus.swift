@@ -245,6 +245,22 @@ class NBPictureMaskTestStatus: XCTestCase {
     retVal = pictureMask.check("+1.");      XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("-1.0");     XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("123.456");  XCTAssert(retVal.status == .Ok)
+
+    maskVal = pictureMask.setMask("{*#}")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check(",");        XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask("{;,###,*#}")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check(",");        XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",1");       XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",12");      XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",123");     XCTAssert(retVal.status == .Ok)
   }
 
   func test_grouping_group() {
@@ -428,7 +444,7 @@ class NBPictureMaskTestStatus: XCTestCase {
 
     maskVal = pictureMask.setMask("#{&,*#}")
     XCTAssertNil(maskVal.errMsg)
-    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .OkSoFar)
     retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("1A");       XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("1AB");      XCTAssert(retVal.status == .NotOk)
@@ -483,6 +499,16 @@ class NBPictureMaskTestStatus: XCTestCase {
     retVal = pictureMask.check("A1");       XCTAssert(retVal.status == .NotOk)
     retVal = pictureMask.check("123");      XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("1234");     XCTAssert(retVal.status == .NotOk)
+
+    maskVal = pictureMask.setMask("[;,###,*#]")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("");         XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("1");        XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check("12");       XCTAssert(retVal.status == .Ok)
+    retVal = pictureMask.check(",");        XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",1");       XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",12");      XCTAssert(retVal.status == .OkSoFar)
+    retVal = pictureMask.check(",123");     XCTAssert(retVal.status == .Ok)
   }
 
   func test_optional_nested() {
@@ -760,7 +786,7 @@ class NBPictureMaskTestStatus: XCTestCase {
     var retVal: NBPictureMask.CheckResult
 
     maskVal = pictureMask.setMask(
-                "{{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#]{{;,###*[;,###]},*#}[.*#]},.#*#}[E[[+,-]#[#][#]]]}")
+                "{{{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]],({{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]]),[-]{{#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]]}")
 
     XCTAssertNil(maskVal.errMsg)
     retVal = pictureMask.check("1");            XCTAssert(retVal.status == .Ok)
