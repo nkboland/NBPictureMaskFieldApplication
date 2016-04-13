@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  DesignViewController.swift
 //  NBPictureMaskField
 //
 //  Created by Nick Boland on 3/27/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITextFieldDelegate {
+class DesignViewController: UIViewController, UITextFieldDelegate {
 //------------------------------------------------------------------------------
 
   @IBOutlet weak var maskStatusLabel: UILabel!
@@ -24,7 +24,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     super.viewDidLoad()
 
     // Dismiss keyboard when tapping outside text field
-    let tap = UITapGestureRecognizer(target: self, action: #selector(ViewController.dismissKeyboard))
+    let tap = UITapGestureRecognizer(target: self, action: #selector(DesignViewController.dismissKeyboard))
     view.addGestureRecognizer(tap)
 
     // We need to update things when field is edited

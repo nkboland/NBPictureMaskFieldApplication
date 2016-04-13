@@ -51,7 +51,7 @@ class NBPictureMaskField: UITextField {
 
   deinit {
   //----------------------------------------------------------------------------
-    removeObserver(self, forKeyPath: "text")
+    //removeObserver(self, forKeyPath: "text")          // DO I NEED THIS???
   }
 
   //--------------------
@@ -106,7 +106,7 @@ class NBPictureMaskField: UITextField {
 
     // This observer used on manual updating text property
     delegate = self
-//    addObserver(self, forKeyPath: "text", options: [], context: nil)
+    //addObserver(self, forKeyPath: "text", options: [], context: nil)    // DO I NEED THIS??
   }
 
 }

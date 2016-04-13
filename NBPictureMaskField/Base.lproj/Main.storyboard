@@ -6,32 +6,26 @@
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Design View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="NBPictureMaskField" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="DesignViewController" customModule="NBPictureMaskField" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wLk-b9-qJm">
-                                <rect key="frame" x="0.0" y="20" width="600" height="580"/>
+                                <rect key="frame" x="0.0" y="64" width="600" height="736"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="1sb-U0-hJR" userLabel="Main Stack View">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="474"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="421"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NBPictureMaskField" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zsT-xP-q5Q">
-                                                <rect key="frame" x="183" y="0.0" width="235" height="33"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="r8P-dG-jad" userLabel="Mask Status Stack View">
-                                                <rect key="frame" x="30" y="53" width="540" height="55"/>
+                                                <rect key="frame" x="30" y="0.0" width="540" height="55"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mask Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EiK-78-Vnv">
                                                         <rect key="frame" x="0.0" y="0.0" width="540" height="17"/>
@@ -65,9 +59,12 @@
                                                 <constraints>
                                                     <constraint firstItem="KwT-90-tVh" firstAttribute="width" secondItem="r8P-dG-jad" secondAttribute="width" id="Oxa-Ia-1UP"/>
                                                 </constraints>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="0.0" width="540" height="55"/>
+                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="LgW-Qg-xwm" userLabel="Text Status Stack View">
-                                                <rect key="frame" x="30" y="128" width="540" height="55"/>
+                                                <rect key="frame" x="30" y="75" width="540" height="55"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Input Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KXr-KR-GmV">
                                                         <rect key="frame" x="0.0" y="0.0" width="540" height="17"/>
@@ -99,9 +96,12 @@
                                                         </subviews>
                                                     </stackView>
                                                 </subviews>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="75" width="540" height="55"/>
+                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ARD-BO-8ci" userLabel="Enforce Mask Stack View">
-                                                <rect key="frame" x="30" y="203" width="540" height="31"/>
+                                                <rect key="frame" x="30" y="150" width="540" height="31"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enforce Mask" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VbO-wQ-B5V">
                                                         <rect key="frame" x="0.0" y="5" width="152" height="21"/>
@@ -122,9 +122,12 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="150" width="540" height="31"/>
+                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="asi-lZ-IeZ" userLabel="Auto Fill Stack View">
-                                                <rect key="frame" x="30" y="254" width="540" height="31"/>
+                                                <rect key="frame" x="30" y="201" width="540" height="31"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Auto Fill" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YJ9-By-kCF">
                                                         <rect key="frame" x="0.0" y="5" width="152" height="21"/>
@@ -145,9 +148,12 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="201" width="540" height="31"/>
+                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Tf1-Hi-zma" userLabel="Mask Sample Stack View">
-                                                <rect key="frame" x="30" y="305" width="540" height="107"/>
+                                                <rect key="frame" x="30" y="252" width="540" height="107"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mask Samples" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q9c-lz-v6z">
                                                         <rect key="frame" x="0.0" y="0.0" width="540" height="17"/>
@@ -221,9 +227,12 @@
                                                         </subviews>
                                                     </stackView>
                                                 </subviews>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="252" width="540" height="107"/>
+                                                </variation>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="PR7-Vy-6qy" userLabel="Mask Tree Stack View">
-                                                <rect key="frame" x="30" y="432" width="540" height="42"/>
+                                                <rect key="frame" x="30" y="379" width="540" height="42"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mask Tree" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I6T-8Y-BNe">
                                                         <rect key="frame" x="0.0" y="0.0" width="540" height="17"/>
@@ -238,6 +247,9 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
+                                                <variation key="widthClass=regular" misplaced="YES">
+                                                    <rect key="frame" x="30" y="379" width="540" height="42"/>
+                                                </variation>
                                             </stackView>
                                         </subviews>
                                         <constraints>
@@ -251,6 +263,9 @@
                                             <constraint firstItem="VbO-wQ-B5V" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" id="gQn-SZ-Kis"/>
                                             <constraint firstItem="YJ9-By-kCF" firstAttribute="width" secondItem="IWW-4A-xvh" secondAttribute="width" priority="750" id="mEf-Kw-ULn"/>
                                         </constraints>
+                                        <variation key="widthClass=regular" misplaced="YES">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="421"/>
+                                        </variation>
                                     </stackView>
                                 </subviews>
                                 <constraints>
@@ -272,11 +287,11 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="wLk-b9-qJm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="2HI-VJ-WEI"/>
                             <constraint firstItem="1sb-U0-hJR" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="2LQ-De-W3g"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="wLk-b9-qJm" secondAttribute="bottom" id="EjE-HH-eJg"/>
-                            <constraint firstItem="wLk-b9-qJm" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="FZN-p0-OWt"/>
-                            <constraint firstAttribute="trailing" secondItem="wLk-b9-qJm" secondAttribute="trailing" id="VAm-zJ-2wC"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="wLk-b9-qJm" secondAttribute="bottom" id="9Jh-4Z-HWV"/>
+                            <constraint firstAttribute="trailing" secondItem="wLk-b9-qJm" secondAttribute="trailing" id="VHf-df-c8u"/>
+                            <constraint firstItem="wLk-b9-qJm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="pIH-r4-19b"/>
+                            <constraint firstItem="wLk-b9-qJm" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="qil-u9-gSZ"/>
                         </constraints>
                     </view>
                     <connections>
@@ -291,13 +306,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1507" y="420"/>
+            <point key="canvasLocation" x="1589" y="420"/>
         </scene>
         <!--NBPictureMaskField-->
         <scene sceneID="yZz-7d-RkU">
             <objects>
-                <tableViewController id="NbP-gv-CbS" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="YPS-s2-zya">
+                <tableViewController id="NbP-gv-CbS" customClass="MainTableViewController" customModule="NBPictureMaskField" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="YPS-s2-zya">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -320,6 +335,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="BYZ-38-t0r" kind="show" id="CC2-he-gTX"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="74a-te-2I5">
                                         <rect key="frame" x="0.0" y="108" width="600" height="44"/>
@@ -336,35 +354,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="D4f-rI-HLw">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="yes/no" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oj5-az-TEq">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="oj5-az-TEq" firstAttribute="width" secondItem="BIP-00-ebR" secondAttribute="width" multiplier="0.25" priority="250" id="TEQ-3a-K93"/>
                                                         <constraint firstItem="D4f-rI-HLw" firstAttribute="width" secondItem="BIP-00-ebR" secondAttribute="width" multiplier="0.45" priority="750" id="ieL-wj-f5Z"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -390,35 +396,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5d6-RK-tO6">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NgS-VS-MNv">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="5d6-RK-tO6" firstAttribute="width" secondItem="ZX2-8L-0y0" secondAttribute="width" multiplier="0.45" priority="750" id="6zt-e4-SE4"/>
                                                         <constraint firstItem="NgS-VS-MNv" firstAttribute="width" secondItem="ZX2-8L-0y0" secondAttribute="width" multiplier="0.25" priority="250" id="X1g-VQ-ck6"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -444,35 +438,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="GNc-fj-oCz">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123.456" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rgL-5u-2qs">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="rgL-5u-2qs" firstAttribute="width" secondItem="vgn-rP-o8p" secondAttribute="width" multiplier="0.25" priority="250" id="2l2-Jc-CaJ"/>
                                                         <constraint firstItem="GNc-fj-oCz" firstAttribute="width" secondItem="vgn-rP-o8p" secondAttribute="width" multiplier="0.45" priority="750" id="MGl-T8-mHH"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -498,35 +480,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ma4-FN-4F3">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-3.1415e1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6m-EC-0Wa">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="ma4-FN-4F3" firstAttribute="width" secondItem="7VN-mO-xpk" secondAttribute="width" multiplier="0.45" priority="750" id="I1G-wn-Z0y"/>
                                                         <constraint firstItem="f6m-EC-0Wa" firstAttribute="width" secondItem="7VN-mO-xpk" secondAttribute="width" multiplier="0.25" priority="250" id="dn7-sG-bTr"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -552,35 +522,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3Y6-1W-Tzi">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mm/dd/yyyy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l8u-Sq-HvH">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="l8u-Sq-HvH" firstAttribute="width" secondItem="ej8-TT-L1v" secondAttribute="width" multiplier="0.25" priority="250" id="ggD-i3-wzm"/>
                                                         <constraint firstItem="3Y6-1W-Tzi" firstAttribute="width" secondItem="ej8-TT-L1v" secondAttribute="width" multiplier="0.45" priority="750" id="hXX-4g-KHn"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -606,35 +564,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zVG-mb-omk">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="yyyy-mm-dd" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vhZ-Nt-uxL">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="zVG-mb-omk" firstAttribute="width" secondItem="EKu-zf-cWe" secondAttribute="width" multiplier="0.45" priority="750" id="LnC-tN-2Z1"/>
                                                         <constraint firstItem="vhZ-Nt-uxL" firstAttribute="width" secondItem="EKu-zf-cWe" secondAttribute="width" multiplier="0.25" priority="250" id="VMy-HM-abG"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -660,35 +606,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Kw-pH-M9P">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="hh:mm:ss" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SRC-RG-cfx">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="SRC-RG-cfx" firstAttribute="width" secondItem="OfF-fg-o8z" secondAttribute="width" multiplier="0.25" priority="250" id="8xh-JH-q0g"/>
                                                         <constraint firstItem="8Kw-pH-M9P" firstAttribute="width" secondItem="OfF-fg-o8z" secondAttribute="width" multiplier="0.45" priority="750" id="IuE-Gv-nSO"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -714,35 +648,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6Iy-QS-cit">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="hh:mm:ss AM/PM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oGH-jO-gWd">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="oGH-jO-gWd" firstAttribute="width" secondItem="XVL-dd-sUi" secondAttribute="width" multiplier="0.25" priority="250" id="4sW-50-Jn2"/>
                                                         <constraint firstItem="6Iy-QS-cit" firstAttribute="width" secondItem="XVL-dd-sUi" secondAttribute="width" multiplier="0.45" priority="750" id="SSo-Az-CpO"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -768,35 +690,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6u1-rr-1p1">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Red, Green..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yS4-Mp-Ald">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="6u1-rr-1p1" firstAttribute="width" secondItem="XPQ-dn-eOP" secondAttribute="width" multiplier="0.45" priority="750" id="hKV-0m-7OS"/>
                                                         <constraint firstItem="yS4-Mp-Ald" firstAttribute="width" secondItem="XPQ-dn-eOP" secondAttribute="width" multiplier="0.25" priority="250" id="jhp-mU-qnq"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -822,35 +732,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BpZ-cM-EVf">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(123) 456-7890" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h4h-wU-ykg">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="BpZ-cM-EVf" firstAttribute="width" secondItem="G42-fn-rr9" secondAttribute="width" multiplier="0.45" priority="750" id="dF2-ya-0Ai"/>
                                                         <constraint firstItem="h4h-wU-ykg" firstAttribute="width" secondItem="G42-fn-rr9" secondAttribute="width" multiplier="0.25" priority="250" id="xF0-X3-XRM"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -876,35 +774,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zqh-49-lA4">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12345-6789" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0me-lx-dkK">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="0me-lx-dkK" firstAttribute="width" secondItem="SFj-CE-Rlu" secondAttribute="width" multiplier="0.25" priority="250" id="OdJ-Bv-oRp"/>
                                                         <constraint firstItem="zqh-49-lA4" firstAttribute="width" secondItem="SFj-CE-Rlu" secondAttribute="width" multiplier="0.45" priority="750" id="pac-6o-cFg"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
@@ -930,35 +816,23 @@
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="0.0" y="11" width="159" height="21"/>
-                                                            </variation>
                                                         </label>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="q4E-D3-9x9">
                                                             <rect key="frame" x="167" y="7" width="263" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="167" y="7" width="263" height="30"/>
-                                                            </variation>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, World!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lOU-yM-KTA">
                                                             <rect key="frame" x="438" y="14" width="146" height="17"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <nil key="highlightedColor"/>
-                                                            <variation key="widthClass=regular" misplaced="YES">
-                                                                <rect key="frame" x="438" y="13" width="146" height="17"/>
-                                                            </variation>
                                                         </label>
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="q4E-D3-9x9" firstAttribute="width" secondItem="STg-Dl-GTw" secondAttribute="width" multiplier="0.45" priority="750" id="lcX-ec-7l9"/>
                                                         <constraint firstItem="lOU-yM-KTA" firstAttribute="width" secondItem="STg-Dl-GTw" secondAttribute="width" multiplier="0.25" priority="250" id="tnm-a4-ghd"/>
                                                     </constraints>
-                                                    <variation key="widthClass=regular" misplaced="YES">
-                                                        <rect key="frame" x="8" y="0.0" width="584" height="43"/>
-                                                    </variation>
                                                 </stackView>
                                             </subviews>
                                             <constraints>
