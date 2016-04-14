@@ -582,6 +582,15 @@ class NBPictureMaskTestStatus: XCTestCase {
     retVal = pictureMask.check("1/01/01");    XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("1/1/2001");   XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("01/01/2001"); XCTAssert(retVal.status == .Ok)
+
+    maskVal = pictureMask.setMask("{{{09,04,06,11}/{0{1,2,3,4,5,6,7,8,9},1#,2#,30}},{{01,03,05,07,08,10,12}/{0{1,2,3,4,5,6,7,8,9},1#,2#,30,31}},{02/{0{1,2,3,4,5,6,7,8,9},1#,20,21,22,23,24,25,26,27,28,29}}}/{19,20}##")
+    XCTAssertNil(maskVal.errMsg)
+    retVal = pictureMask.check("1/1/01");     XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("01/1/01");    XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("1/01/01");    XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("01/01/01");   XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("1/1/2001");   XCTAssert(retVal.status == .NotOk)
+    retVal = pictureMask.check("01/01/2001"); XCTAssert(retVal.status == .Ok)
   }
 
   func test_examples_timestamp() {
@@ -668,7 +677,7 @@ class NBPictureMaskTestStatus: XCTestCase {
     retVal = pictureMask.check("Hi");                     XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("A B");                    XCTAssert(retVal.status == .Ok)
 
-    maskVal = pictureMask.setMask("*[&[*?]*[{#, ,.,;,,;;,:,;[,;],(,)}]]")
+    maskVal = pictureMask.setMask("*[&[*?]*[{#, ,.,;,,;;,:,;!,;[,;],(,)}]]")
     XCTAssertNil(maskVal.errMsg)
     retVal = pictureMask.check("Hi");                     XCTAssert(retVal.status == .Ok)
     retVal = pictureMask.check("A B");                    XCTAssert(retVal.status == .Ok)

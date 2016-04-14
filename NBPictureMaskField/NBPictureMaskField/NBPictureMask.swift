@@ -589,9 +589,11 @@ class NBPictureMask {
 
     var lines = [String]()
 
-    lines.append("MASK TREE '\(mask)'")
+    lines.append("Mask:")
+    lines.append("\(mask)")
+    lines.append("-- START --")
     NBPictureMask.printMaskTree(&lines, index: 0, node: rootNode)
-    lines.append("MASK TREE FINISHED")
+    lines.append("-- END --")
 
     return lines.joinWithSeparator("\n")
   }
