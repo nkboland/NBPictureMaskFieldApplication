@@ -1,16 +1,14 @@
 //
-//  DesignTableViewController.swift
+//  MainDesignTableViewController.swift
 //  NBPictureMaskField
 //
 //  Created by Nick Boland on 4/12/16.
 //  Copyright © 2016 Nick Boland. All rights reserved.
 //
 
-//  {{{09,04,06,11}/{0{1,2,3,4,5,6,7,8,9},1#,2#,30}},{{01,03,05,07,08,10,12}/{0{1,2,3,4,5,6,7,8,9},1#,2#,30,31}},{02/{0{1,2,3,4,5,6,7,8,9},1#,20,21,22,23,24,25,26,27,28,29}}}/{19,20}##
-
 import UIKit
 
-class DesignTableViewController: UITableViewController, UITextFieldDelegate {
+class MainDesignTableViewController: UITableViewController, UITextFieldDelegate {
 //------------------------------------------------------------------------------
 
   @IBOutlet weak var maskStatusLabel: UILabel!
@@ -30,7 +28,7 @@ class DesignTableViewController: UITableViewController, UITextFieldDelegate {
     tableView.rowHeight = UITableViewAutomaticDimension
 
     // Dismiss keyboard when tapping outside text field
-    let tap = UITapGestureRecognizer(target: self, action: #selector(DesignTableViewController.dismissKeyboard))
+    let tap = UITapGestureRecognizer(target: self, action: #selector(MainDesignTableViewController.dismissKeyboard))
     view.addGestureRecognizer(tap)
 
     // We need to update things when field is edited

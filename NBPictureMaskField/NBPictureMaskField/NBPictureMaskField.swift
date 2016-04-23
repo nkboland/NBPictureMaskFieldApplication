@@ -34,12 +34,19 @@ import Foundation
 class NBPictureMaskField: UITextField {
 //------------------------------------------------------------------------------
 
-  //--------------------
+  // MARK: - Types
+
+  typealias ValidateClosure = (text: String, matchesMask: Bool, isComplete: Bool ) -> (Bool)
+  typealias ChangedClosure = (text: String, matchesMask: Bool, isComplete: Bool ) -> ()
+
   // MARK: - Variables
 
   var maskErrMsg: String?
-  var nbPictureMask : NBPictureMask!
 
+  var validate: ValidateClosure?
+  var changed: ChangedClosure?
+
+  private var nbPictureMask : NBPictureMask!
   private var _enforceMask: Bool
 
   required init?(coder aDecoder: NSCoder) {
@@ -163,53 +170,50 @@ func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRa
 }
 
 */
-  guard enforceMask else { return true }
+    // Save positions
+    let beginning = textField.beginningOfDocument
+    let start = textField.positionFromPosition(beginning, offset:range.location)
+    //let end = textField.positionFromPosition(start!, offset:range.length)
+    //let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
+    var cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
 
-  // Save positions
-  let beginning = textField.beginningOfDocument
-  let start = textField.positionFromPosition(beginning, offset:range.location)
-//let end = textField.positionFromPosition(start!, offset:range.length)
-//let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
-  var cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
+    let checkResult = nbPictureMask.check(textField.text ?? "", shouldChangeCharactersInRange: range, replacementString: string)
 
-  let checkResult = nbPictureMask.check(textField.text ?? "", shouldChangeCharactersInRange: range, replacementString: string)
+    let matchesMask: Bool
+    let isComplete: Bool
 
-  guard checkResult.status != .NotOk else { return false }
-
-  textField.text = checkResult.text
-  cursorOffset += checkResult.autoFillOffset
-  let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
-  let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
-  textField.selectedTextRange = newSelectedRange
-
-  return false
-
-/*
-
-    let currentText = textField.text ?? ""
-
-    NSLog("=======================")
-    NSLog("TextField text:'\(currentText)' range:\(range) string:'\(string)'")
-
-    let prospectiveText = (currentText as NSString).stringByReplacingCharactersInRange(range, withString: string)
-    NSLog("TextField prospectiveText:'\(prospectiveText)'")
-
-    guard enforceMask else { return true }
-
-    // Enforce the mask
-
-    let retVal = nbPictureMask.check(prospectiveText)
-
-    switch retVal.status {
-    case .Ok,
-         .OkSoFar :
-      textField.text = retVal.text
-      return false
-    case .NotOk :
-      return false
+    switch checkResult.status {
+    case .NotOk:
+      matchesMask = false
+      isComplete = false
+    case .OkSoFar:
+      matchesMask = true
+      isComplete = false
+    case .Ok:
+      matchesMask = true
+      isComplete = true
     }
-*/
 
+    // User may disallow changes
+    if let validate = validate {
+      if !validate(text: checkResult.text, matchesMask: matchesMask, isComplete: isComplete) { return false }
+    }
+
+    // Check if mask is enforced
+    if enforceMask {
+      if !matchesMask { return false }
+    }
+
+    // Update text field
+    textField.text = checkResult.text
+    cursorOffset += checkResult.autoFillOffset
+    let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
+    let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
+    textField.selectedTextRange = newSelectedRange
+
+    changed?(text: checkResult.text, matchesMask: matchesMask, isComplete: isComplete)
+NSLog( "\(checkResult.text) \(matchesMask) \(isComplete)" )
+    return false
   }
 
 }

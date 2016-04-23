@@ -589,7 +589,7 @@ class NBPictureMask {
 
     var lines = [String]()
 
-    lines.append("Mask:")
+    lines.append("-- MASK --")
     lines.append("\(mask)")
     lines.append("-- START --")
     NBPictureMask.printMaskTree(&lines, index: 0, node: rootNode)
@@ -652,7 +652,7 @@ class NBPictureMask {
   //    status    Ok, OkSoFar, or NotOk
   //    errMsg    nil if everything is ok otherwise an isOk    True
 
-    NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
+    //NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
 
     var i = index
 
@@ -760,7 +760,7 @@ class NBPictureMask {
         if fillFlag {
           text.append(node.literal)
           newtext.append(node.literal)
-          NSLog("Autofill \(String(text))")
+          //NSLog("Autofill \(String(text))")
         }
       }
 
@@ -824,13 +824,12 @@ class NBPictureMask {
 
         for n in 0 ..< node.nodes.count {
           let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-          NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+          //NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
           i = retVal.index
           switch retVal.status {
           case .Ok :        break;                  // Continue while everything is ok
           case .OkSoFar :   return retVal           // No more text
           case .NotOk :     if loopOptional {       // No count specified so it doesn't have to match
-//                            return(i, .Ok, nil)
                               break
                             }
                             return retVal           // Otherwise problem
@@ -841,14 +840,9 @@ class NBPictureMask {
 
         // Repeat did not advance and this can only happen if everything was optional
         if i == startIndex {
-
-if loopOptional {
-  NSLog("  repeat did not advance \(loopCount)")
-}
-
-
-
-
+          if loopOptional {
+            //NSLog("  repeat did not advance \(loopCount)")
+          }
           return(i, .Ok, nil)
         }
 
@@ -875,7 +869,7 @@ if loopOptional {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
         case .OkSoFar :     return retVal           // Match first ok so far group
@@ -900,7 +894,7 @@ if loopOptional {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         i = retVal.index
         switch retVal.status {
         case .Ok :          break;            // Continue while everything is ok
@@ -926,7 +920,7 @@ if loopOptional {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
+        //NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
         case .OkSoFar :     return retVal           // Match first ok so far group
@@ -982,29 +976,29 @@ if loopOptional {
   // Check the text against the mask.
 
     let prospectiveText = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-    NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
-    NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
+    //NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
+    //NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
 
     let isAppending: Bool
 
     if range.location >= text.characters.count {
       isAppending = true
-      NSLog("Appending")
+      //NSLog("Appending")
     } else if range.length == 0 {
       isAppending = false
-      NSLog("Inserting")
+      //NSLog("Inserting")
     } else if range.length == string.characters.count {
       isAppending = false
-      NSLog("Replace")
+      //NSLog("Replace")
     } else if range.length > string.characters.count {
       isAppending = false
-      NSLog("Replace and reduce")
+      //NSLog("Replace and reduce")
     } else if range.length < string.characters.count {
       isAppending = false
-      NSLog("Replace and increase")
+      //NSLog("Replace and increase")
     } else {
       isAppending = false
-      NSLog("Something not considered")
+      //NSLog("Something not considered")
     }
 
     // Only autofill when appending
