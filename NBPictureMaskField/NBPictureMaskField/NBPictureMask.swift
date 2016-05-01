@@ -95,7 +95,7 @@ class NBPictureMask {
   //--------------------
   // This is returned when setting the mask.
 
-  enum CheckStatus {
+  enum Status {
   //--------------------
   // These are the different outcomes that may result when checking text.
     case
@@ -104,7 +104,7 @@ class NBPictureMask {
       Ok                                      // The check is ok
   }
 
-  typealias CheckResult = (status: CheckStatus, text: String, errMsg: String?, autoFillOffset: Int)
+  typealias CheckResult = (status: Status, text: String, errMsg: String?, autoFillOffset: Int)
   //--------------------
   // This is returned when checking the text.
   // autoFillOffset - number of characters added with autofill
@@ -162,7 +162,7 @@ class NBPictureMask {
     var nodes   : [Node] = [Node]()           // Child nodes (branches)
    }
 
-  private typealias ChkRslt = (index: Int, status: CheckStatus, errMsg: String?)
+  private typealias ChkRslt = (index: Int, status: Status, errMsg: String?)
 
   //--------------------
   // MARK: - Variables
@@ -946,7 +946,7 @@ class NBPictureMask {
   // Check the text against the mask.
   //
   // NOTE - autoFill cannot be done here because it is not known whether
-  //        if new text was being inserted, deleted, or appended.
+  //        the new text was being inserted, deleted, or appended.
 
     self.text = Array(text.characters)
     self.newtext = Array(text.characters)
@@ -962,13 +962,7 @@ class NBPictureMask {
   // Check the text against the mask.
 
     self.setMask(mask)
-    self.text = Array(text.characters)
-    self.newtext = Array(text.characters)
-
-    var fillFlag = self.autoFill
-    let rslt = check(0, node: rootNode, fillFlag: &fillFlag)
-
-    return (rslt.status, String(self.newtext), rslt.errMsg, 0)
+    return check(text)
   }
 
   func check(text: String, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> CheckResult {

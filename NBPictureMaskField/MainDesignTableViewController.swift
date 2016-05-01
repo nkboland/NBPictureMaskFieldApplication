@@ -15,8 +15,8 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
   @IBOutlet weak var maskTextField: UITextField!
   @IBOutlet weak var inputStatusLabel: UILabel!
   @IBOutlet weak var inputTextField: NBPictureMaskField!
-  @IBOutlet weak var enforceMaskSwitch: UISwitch!
   @IBOutlet weak var autoFillSwitch: UISwitch!
+  @IBOutlet weak var enforceMaskSwitch: UISwitch!
   @IBOutlet weak var maskTreeLabel: UILabel!
 
   override func viewDidLoad() {
@@ -34,12 +34,13 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     // We need to update things when field is edited
     maskTextField.delegate = self
 
+    inputTextField.changed = inputTextFieldChanged
+
     // Load defaults
     loadDefaults(self)
 
     // Update any changes
     maskFieldEditingChanged(maskTextField)
-    textFieldEditingChanged(inputTextField)
   }
 
   override func didReceiveMemoryWarning() {
@@ -56,24 +57,31 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
   func loadDefaults(sender: AnyObject) {
   //----------------------------------------------------------------------------
     let defaults = NSUserDefaults.standardUserDefaults()
-    enforceMaskSwitch.on = defaults.boolForKey("enforceMaskSwitch")
-    autoFillSwitch.on = defaults.boolForKey("autoFillSwitch")
     maskTextField.text = defaults.stringForKey("maskTextField")
-    inputTextField.text = defaults.stringForKey("inputTextField")
+    autoFillSwitch.on = defaults.boolForKey("autoFillSwitch")
+    enforceMaskSwitch.on = defaults.boolForKey("enforceMaskSwitch")
 
+    inputTextField.mask = maskTextField.text ?? ""
+    inputTextField.autoFill = autoFillSwitch.on
     inputTextField.enforceMask = enforceMaskSwitch.on
+
+    inputTextField.text = defaults.stringForKey("inputTextField")
   }
 
-  @IBAction func saveDefaults(sender: AnyObject) {
+  func saveDefaults(sender: AnyObject) {
   //----------------------------------------------------------------------------
     let defaults = NSUserDefaults.standardUserDefaults()
-    defaults.setBool(enforceMaskSwitch.on, forKey: "enforceMaskSwitch")
-    defaults.setBool(autoFillSwitch.on, forKey: "autoFillSwitch")
     defaults.setObject(maskTextField.text, forKey: "maskTextField")
+    defaults.setBool(autoFillSwitch.on, forKey: "autoFillSwitch")
+    defaults.setBool(enforceMaskSwitch.on, forKey: "enforceMaskSwitch")
     defaults.setObject(inputTextField.text, forKey: "inputTextField")
+  }
 
-    inputTextField.enforceMask = enforceMaskSwitch.on
+  @IBAction func switchValueChanged(sender: AnyObject) {
+  //----------------------------------------------------------------------------
     inputTextField.autoFill = autoFillSwitch.on
+    inputTextField.enforceMask = enforceMaskSwitch.on
+    saveDefaults(sender)
   }
 
   @IBAction func maskButtonAction(sender: AnyObject) {
@@ -87,7 +95,7 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
 
   @IBAction func maskFieldEditingChanged(sender: AnyObject) {
   //----------------------------------------------------------------------------
-  // Update lots of things when the mask changes.
+  // Update things when the mask changes.
 
     let textField = sender as! UITextField
     let mask = textField.text ?? ""
@@ -103,21 +111,30 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     saveDefaults(sender)
   }
 
-  @IBAction func textFieldEditingChanged(sender: AnyObject) {
+  func inputTextFieldChanged(sender: AnyObject, text: String, status: NBPictureMask.Status) {
   //----------------------------------------------------------------------------
   // Update things when the text changes.
 
-    let retVal = inputTextField.check(inputTextField.text ?? "")
-
-    let str : String
-
-    switch retVal.status {
-    case .NotOk :     str = "Error: \(retVal.errMsg ?? "")"
-    case .OkSoFar :   str = "Ok so far"
-    case .Ok :        str = "Ok"
+    // Highlight the edit field background color
+    if let textField = sender as? UITextField {
+      switch (text, status) {
+      case ("",    _):    textField.backgroundColor = UIColor.clearColor()
+      case (_, .Ok):      textField.backgroundColor = UIColor.clearColor()
+      case (_, .OkSoFar): textField.backgroundColor = UIColor.yellowColor()
+      case (_, .NotOk):   textField.backgroundColor = UIColor.redColor()
+      }
     }
 
-    inputStatusLabel.text = str
+    // Update the input status label
+    if let pictureMaskField = sender as? NBPictureMaskField {
+      let checkVal = pictureMaskField.check(text)
+      switch (text, status) {
+      case ("",    _):    inputStatusLabel.text = "No input"
+      case (_, .Ok):      inputStatusLabel.text = "Ok"
+      case (_, .OkSoFar): inputStatusLabel.text = "Ok so far"
+      case (_, .NotOk):   inputStatusLabel.text = "Error: \(checkVal.errMsg ?? "")"
+      }
+    }
 
     saveDefaults(sender)
   }

@@ -36,8 +36,8 @@ class NBPictureMaskField: UITextField {
 
   // MARK: - Types
 
-  typealias ValidateClosure = (text: String, matchesMask: Bool, isComplete: Bool ) -> (Bool)
-  typealias ChangedClosure = (text: String, matchesMask: Bool, isComplete: Bool ) -> ()
+  typealias ValidateClosure = (sender: AnyObject, text: String, status: NBPictureMask.Status ) -> (Bool)
+  typealias ChangedClosure = (sender: AnyObject, text: String, status: NBPictureMask.Status ) -> ()
 
   // MARK: - Variables
 
@@ -47,12 +47,14 @@ class NBPictureMaskField: UITextField {
   var changed: ChangedClosure?
 
   private var nbPictureMask : NBPictureMask!
+  private var isEditing: Bool
   private var _enforceMask: Bool
 
   required init?(coder aDecoder: NSCoder) {
   //----------------------------------------------------------------------------
     nbPictureMask = NBPictureMask()
     _enforceMask = true
+    isEditing = false
     super.init(coder: aDecoder)
   }
 
@@ -79,6 +81,12 @@ class NBPictureMaskField: UITextField {
     set { nbPictureMask.setAutoFill(newValue) }
   }
 
+  @IBInspectable var enforceMask: Bool {
+  //----------------------------------------------------------------------------
+    get { return _enforceMask }
+    set { _enforceMask = newValue }
+  }
+
   var maskErrorMessage: String? {
   //----------------------------------------------------------------------------
   // Returns the error message for the current mask, otherwise nil.
@@ -91,10 +99,22 @@ class NBPictureMaskField: UITextField {
     get { return nbPictureMask.maskTreeToString() }
   }
 
-  var enforceMask: Bool {
+  override var text: String? {
   //----------------------------------------------------------------------------
-    get { return _enforceMask }
-    set { _enforceMask = newValue }
+  // Property observer so closures can be called if user sets text property
+  // directly (typically during initialization).
+
+    didSet {
+      guard !isEditing else { return }
+
+      let checkResult = nbPictureMask.check(text ?? "")
+
+      // User does not have a choice at this point in time
+      validate?(sender: self, text: checkResult.text, status: checkResult.status)
+      changed?(sender: self, text: checkResult.text, status: checkResult.status)
+
+      NSLog("OVERRIDE TEXT DIDSET \(text)")
+    }
   }
 
   func check(text: String) -> NBPictureMask.CheckResult {
@@ -139,37 +159,12 @@ extension NBPictureMaskField: UITextFieldDelegate {
 
   func textFieldDidBeginEditing(textField: UITextField) {
   //----------------------------------------------------------------------------
-
-    NSLog("TextFieldDidBeginEdit text:\(textField.text)")
-
+    isEditing = true
   }
-
 
   func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
   //----------------------------------------------------------------------------
 
-
-/*
-UITextFieldTextDidChangeNotification
-
-func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-    let beginning = textField.beginningOfDocument
-    let start = textField.positionFromPosition(beginning, offset:range.location)
-    let end = textField.positionFromPosition(start!, offset:range.length)
-    let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
-    let cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
-
-// just used same text, use whatever you want :)
-    textField.text = (textField.text! as NSString).stringByReplacingCharactersInRange(range, withString: string)
-
-    let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
-    let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
-    textField.selectedTextRange = newSelectedRange
-
-    return false
-}
-
-*/
     // Save positions
     let beginning = textField.beginningOfDocument
     let start = textField.positionFromPosition(beginning, offset:range.location)
@@ -179,29 +174,14 @@ func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRa
 
     let checkResult = nbPictureMask.check(textField.text ?? "", shouldChangeCharactersInRange: range, replacementString: string)
 
-    let matchesMask: Bool
-    let isComplete: Bool
-
-    switch checkResult.status {
-    case .NotOk:
-      matchesMask = false
-      isComplete = false
-    case .OkSoFar:
-      matchesMask = true
-      isComplete = false
-    case .Ok:
-      matchesMask = true
-      isComplete = true
-    }
-
     // User may disallow changes
     if let validate = validate {
-      if !validate(text: checkResult.text, matchesMask: matchesMask, isComplete: isComplete) { return false }
+      if !validate(sender: self, text: checkResult.text, status: checkResult.status) { return false }
     }
 
     // Check if mask is enforced
     if enforceMask {
-      if !matchesMask { return false }
+      if checkResult.status == .NotOk { return false }
     }
 
     // Update text field
@@ -211,9 +191,13 @@ func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRa
     let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
     textField.selectedTextRange = newSelectedRange
 
-    changed?(text: checkResult.text, matchesMask: matchesMask, isComplete: isComplete)
-NSLog( "\(checkResult.text) \(matchesMask) \(isComplete)" )
+    changed?(sender: self, text: checkResult.text, status: checkResult.status)
     return false
+  }
+
+  func textFieldDidEndEditing(textField: UITextField) {
+  //----------------------------------------------------------------------------
+    isEditing = false
   }
 
 }
