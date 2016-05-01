@@ -117,9 +117,6 @@
                                                             <rect key="frame" x="188" y="0.0" width="382" height="30"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <textInputTraits key="textInputTraits"/>
-                                                            <connections>
-                                                                <action selector="textFieldEditingChanged:" destination="yrH-Cq-FoN" eventType="editingChanged" id="l4k-Xt-wvh"/>
-                                                            </connections>
                                                         </textField>
                                                     </subviews>
                                                 </stackView>
@@ -132,37 +129,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="UTU-sC-nFL">
-                                        <rect key="frame" x="0.0" y="202" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UTU-sC-nFL" id="E7b-zv-unF">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="iX8-Gg-uMg">
-                                                    <rect key="frame" x="15" y="8" width="297" height="31"/>
-                                                    <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enforce Mask" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-Gm-4sB">
-                                                            <rect key="frame" x="0.0" y="5" width="240" height="21"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
-                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XJt-xl-Y69">
-                                                            <rect key="frame" x="248" y="0.0" width="51" height="31"/>
-                                                        </switch>
-                                                    </subviews>
-                                                </stackView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="iX8-Gg-uMg" firstAttribute="leading" secondItem="E7b-zv-unF" secondAttribute="leadingMargin" constant="7" id="1p4-t9-sze"/>
-                                                <constraint firstItem="iX8-Gg-uMg" firstAttribute="top" secondItem="E7b-zv-unF" secondAttribute="topMargin" id="fMA-7z-hes"/>
-                                                <constraint firstItem="xGQ-Gm-4sB" firstAttribute="width" secondItem="E7b-zv-unF" secondAttribute="width" multiplier="0.4" priority="750" id="oal-OD-iqG"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="V2X-Xd-2ML">
-                                        <rect key="frame" x="0.0" y="246" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="202" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="V2X-Xd-2ML" id="lDl-BF-IoT">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
@@ -179,6 +147,9 @@
                                                         </label>
                                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5De-xF-6ef">
                                                             <rect key="frame" x="248" y="0.0" width="51" height="31"/>
+                                                            <connections>
+                                                                <action selector="switchValueChanged:" destination="yrH-Cq-FoN" eventType="valueChanged" id="L18-C6-8ma"/>
+                                                            </connections>
                                                         </switch>
                                                     </subviews>
                                                 </stackView>
@@ -187,6 +158,38 @@
                                                 <constraint firstItem="0nB-fh-4cb" firstAttribute="leading" secondItem="lDl-BF-IoT" secondAttribute="leadingMargin" constant="7" id="63h-5W-sJa"/>
                                                 <constraint firstItem="0nB-fh-4cb" firstAttribute="top" secondItem="lDl-BF-IoT" secondAttribute="topMargin" id="ALN-5t-tZU"/>
                                                 <constraint firstItem="rZv-49-crs" firstAttribute="width" secondItem="lDl-BF-IoT" secondAttribute="width" multiplier="0.4" priority="750" id="SCa-ed-mnR"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="UTU-sC-nFL">
+                                        <rect key="frame" x="0.0" y="246" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UTU-sC-nFL" id="E7b-zv-unF">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="iX8-Gg-uMg">
+                                                    <rect key="frame" x="15" y="8" width="297" height="31"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enforce Mask" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-Gm-4sB">
+                                                            <rect key="frame" x="0.0" y="5" width="240" height="21"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XJt-xl-Y69">
+                                                            <rect key="frame" x="248" y="0.0" width="51" height="31"/>
+                                                            <connections>
+                                                                <action selector="switchValueChanged:" destination="yrH-Cq-FoN" eventType="valueChanged" id="VdC-6u-ZHh"/>
+                                                            </connections>
+                                                        </switch>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="iX8-Gg-uMg" firstAttribute="leading" secondItem="E7b-zv-unF" secondAttribute="leadingMargin" constant="7" id="1p4-t9-sze"/>
+                                                <constraint firstItem="iX8-Gg-uMg" firstAttribute="top" secondItem="E7b-zv-unF" secondAttribute="topMargin" id="fMA-7z-hes"/>
+                                                <constraint firstItem="xGQ-Gm-4sB" firstAttribute="width" secondItem="E7b-zv-unF" secondAttribute="width" multiplier="0.4" priority="750" id="oal-OD-iqG"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -617,7 +620,7 @@
                                                             <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="autoFill" value="YES"/>
-                                                                <userDefinedRuntimeAttribute type="string" keyPath="mask" value="{{[-,+]#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[[+,-]#[#][#]]]"/>
+                                                                <userDefinedRuntimeAttribute type="string" keyPath="mask" value="{{[-,+]#[#][#][;,###*[;,###],*#][.*#]},.#*#}[E[+,-]#[#][#]]"/>
                                                             </userDefinedRuntimeAttributes>
                                                         </textField>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-3.1415E1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f6m-EC-0Wa">
@@ -1024,6 +1027,20 @@
                     <navigationItem key="navigationItem" title="NBPictureMaskField" id="Mlc-8f-C99"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="600" height="800"/>
+                    <connections>
+                        <outlet property="booleanTextField" destination="D4f-rI-HLw" id="2mg-LI-E4z"/>
+                        <outlet property="capitalizeTextField" destination="q4E-D3-9x9" id="yar-SM-gMj"/>
+                        <outlet property="colorTextField" destination="6u1-rr-1p1" id="geT-4Q-Nbc"/>
+                        <outlet property="dateISOTextField" destination="zVG-mb-omk" id="5Vb-uP-Ivy"/>
+                        <outlet property="dateUSTextField" destination="3Y6-1W-Tzi" id="yOg-2R-3ze"/>
+                        <outlet property="floatTextField" destination="GNc-fj-oCz" id="UeY-1A-GJE"/>
+                        <outlet property="integerTextField" destination="5d6-RK-tO6" id="SzG-om-vP7"/>
+                        <outlet property="scientificTextField" destination="ma4-FN-4F3" id="pxg-rr-gqc"/>
+                        <outlet property="telephoneTextField" destination="BpZ-cM-EVf" id="D4A-7l-dNP"/>
+                        <outlet property="timeAMPMTextField" destination="6Iy-QS-cit" id="mPo-FM-Xtb"/>
+                        <outlet property="timeTextField" destination="8Kw-pH-M9P" id="D3L-aq-6ef"/>
+                        <outlet property="zipTextField" destination="zqh-49-lA4" id="PwU-Jf-rZn"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ijl-hN-uqO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
