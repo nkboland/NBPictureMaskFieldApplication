@@ -72,15 +72,6 @@
 //  character. For example:
 //  (###) ###-####    Entered as <' '>123<' '><' '>456<' '>7890 gives "(123) 456-7890"
 //
-//  TO DO
-//  -----
-//
-//  1. Auto fill implementation.
-//  2. Text checking error message.
-//  3. Validate on exit
-//  4. Validate during entry
-//  5. Allow illegal values during entry
-//
 //==============================================================================
 
 import Foundation
@@ -652,8 +643,6 @@ class NBPictureMask {
   //    status    Ok, OkSoFar, or NotOk
   //    errMsg    nil if everything is ok otherwise an isOk    True
 
-    //NSLog("CHECK \(NBPictureMask.lastDot(String(node.type))) - \(index) \(node.str)")
-
     var i = index
 
     //--------------------
@@ -760,7 +749,6 @@ class NBPictureMask {
         if fillFlag {
           text.append(node.literal)
           newtext.append(node.literal)
-          //NSLog("Autofill \(String(text))")
         }
       }
 
@@ -824,7 +812,6 @@ class NBPictureMask {
 
         for n in 0 ..< node.nodes.count {
           let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-          //NSLog("  repeat \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
           i = retVal.index
           switch retVal.status {
           case .Ok :        break;                  // Continue while everything is ok
@@ -840,9 +827,6 @@ class NBPictureMask {
 
         // Repeat did not advance and this can only happen if everything was optional
         if i == startIndex {
-          if loopOptional {
-            //NSLog("  repeat did not advance \(loopCount)")
-          }
           return(i, .Ok, nil)
         }
 
@@ -869,7 +853,6 @@ class NBPictureMask {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        //NSLog("  grouping \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
         case .OkSoFar :     return retVal           // Match first ok so far group
@@ -894,7 +877,6 @@ class NBPictureMask {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        //NSLog("  group \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         i = retVal.index
         switch retVal.status {
         case .Ok :          break;            // Continue while everything is ok
@@ -920,7 +902,6 @@ class NBPictureMask {
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
-        //NSLog("  optional \(NBPictureMask.lastDot(String(retVal.status))) - \(i) \(node.str)")
         switch retVal.status {
         case .Ok :          return retVal           // Match first ok group
         case .OkSoFar :     return retVal           // Match first ok so far group
@@ -970,29 +951,27 @@ class NBPictureMask {
   // Check the text against the mask.
 
     let prospectiveText = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
-    //NSLog("SHOULD CHANGE '\(text)' rep='\(string)' range=\(range)")
-    //NSLog("PROSPECTIVE TEXT '\(prospectiveText)'")
 
     let isAppending: Bool
 
+    // Appending
     if range.location >= text.characters.count {
       isAppending = true
-      //NSLog("Appending")
+    // Inserting
     } else if range.length == 0 {
       isAppending = false
-      //NSLog("Inserting")
+    // Replacing
     } else if range.length == string.characters.count {
       isAppending = false
-      //NSLog("Replace")
+    // Replace and reduce
     } else if range.length > string.characters.count {
       isAppending = false
-      //NSLog("Replace and reduce")
+    // Replace and increase
     } else if range.length < string.characters.count {
       isAppending = false
-      //NSLog("Replace and increase")
+    // Somthing else
     } else {
       isAppending = false
-      //NSLog("Something not considered")
     }
 
     // Only autofill when appending

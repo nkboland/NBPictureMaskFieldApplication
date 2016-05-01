@@ -16,6 +16,8 @@
 //  Storyboard Attributes:
 //
 //    mask
+//    autofill
+//    enforceMask
 //
 //  Class Variables:
 //
@@ -25,6 +27,11 @@
 //  Class Functions:
 //
 //    check()
+//
+//  Closures:
+//
+//    validate
+//    changed
 //
 //==============================================================================
 
@@ -56,11 +63,6 @@ class NBPictureMaskField: UITextField {
     _enforceMask = true
     isEditing = false
     super.init(coder: aDecoder)
-  }
-
-  deinit {
-  //----------------------------------------------------------------------------
-    //removeObserver(self, forKeyPath: "text")          // DO I NEED THIS???
   }
 
   //--------------------
@@ -112,8 +114,6 @@ class NBPictureMaskField: UITextField {
       // User does not have a choice at this point in time
       validate?(sender: self, text: checkResult.text, status: checkResult.status)
       changed?(sender: self, text: checkResult.text, status: checkResult.status)
-
-      NSLog("OVERRIDE TEXT DIDSET \(text)")
     }
   }
 
@@ -133,20 +133,6 @@ class NBPictureMaskField: UITextField {
 
     // This observer used on manual updating text property
     delegate = self
-    //addObserver(self, forKeyPath: "text", options: [], context: nil)    // DO I NEED THIS??
-  }
-
-}
-
-//--------------------
-// MARK: - Observers
-
-extension NBPictureMaskField {
-//------------------------------------------------------------------------------
-
-  override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
-  //----------------------------------------------------------------------------
-    NSLog("OBSERVE VALUE FOR KEY PATH")
   }
 
 }
