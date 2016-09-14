@@ -61,42 +61,42 @@ class MainTableViewController: UITableViewController {
     view.endEditing(true)
   }
 
-  func inputTextFieldChanged(sender: AnyObject, text: String, status: NBPictureMask.Status) {
+  func inputTextFieldChanged(_ sender: AnyObject, text: String, status: NBPictureMask.Status) {
   //----------------------------------------------------------------------------
   // Highlight the edit field background color
 
     if let textField = sender as? UITextField {
       switch (text, status) {
-      case ("",    _):    textField.backgroundColor = UIColor.clearColor()
-      case (_, .Ok):      textField.backgroundColor = UIColor.clearColor()
-      case (_, .OkSoFar): textField.backgroundColor = UIColor.yellowColor()
-      case (_, .NotOk):   textField.backgroundColor = UIColor.redColor()
+      case ("",    _):    textField.backgroundColor = UIColor.clear
+      case (_, .ok):      textField.backgroundColor = UIColor.clear
+      case (_, .okSoFar): textField.backgroundColor = UIColor.yellow
+      case (_, .notOk):   textField.backgroundColor = UIColor.red
       }
     }
   }
 
-  func dateUSTextFieldValidate(sender: AnyObject, text: String, status: NBPictureMask.Status) -> Bool {
+  func dateUSTextFieldValidate(_ sender: AnyObject, text: String, status: NBPictureMask.Status) -> Bool {
   //----------------------------------------------------------------------------
   // Validate date string in "mm/dd/yyyy" format.
 
-    guard status == .Ok else { return true }
+    guard status == .ok else { return true }
 
-    let dateFormatter = NSDateFormatter()
+    let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "MM/dd/yyyy"
-    let date = dateFormatter.dateFromString(text)
+    let date = dateFormatter.date(from: text)
 
     return date != nil
   }
 
-  func dateISOTextFieldValidate(sender: AnyObject, text: String, status: NBPictureMask.Status) -> Bool {
+  func dateISOTextFieldValidate(_ sender: AnyObject, text: String, status: NBPictureMask.Status) -> Bool {
   //----------------------------------------------------------------------------
   // Validate date string in "yyyy-mm-dd" format.
 
-    guard status == .Ok else { return true }
+    guard status == .ok else { return true }
 
-    let dateFormatter = NSDateFormatter()
+    let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd"
-    let date = dateFormatter.dateFromString(text)
+    let date = dateFormatter.date(from: text)
 
     return date != nil
   }

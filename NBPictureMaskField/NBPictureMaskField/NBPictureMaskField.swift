@@ -15,7 +15,7 @@
 //
 //  Storyboard Attributes:
 //
-//    mask
+//    pictureMask
 //    autofill
 //    enforceMask
 //
@@ -43,8 +43,8 @@ class NBPictureMaskField: UITextField {
 
   // MARK: - Types
 
-  typealias ValidateClosure = (sender: AnyObject, text: String, status: NBPictureMask.Status ) -> (Bool)
-  typealias ChangedClosure = (sender: AnyObject, text: String, status: NBPictureMask.Status ) -> ()
+  typealias ValidateClosure = (_ sender: AnyObject, _ text: String, _ status: NBPictureMask.Status ) -> (Bool)
+  typealias ChangedClosure = (_ sender: AnyObject, _ text: String, _ status: NBPictureMask.Status ) -> ()
 
   // MARK: - Variables
 
@@ -53,22 +53,22 @@ class NBPictureMaskField: UITextField {
   var validate: ValidateClosure?
   var changed: ChangedClosure?
 
-  private var nbPictureMask : NBPictureMask!
-  private var isEditing: Bool
-  private var _enforceMask: Bool
+  fileprivate var nbPictureMask : NBPictureMask!
+  internal var isEditingText: Bool
+  fileprivate var _enforceMask: Bool
 
   required init?(coder aDecoder: NSCoder) {
   //----------------------------------------------------------------------------
     nbPictureMask = NBPictureMask()
     _enforceMask = true
-    isEditing = false
+    isEditingText = false
     super.init(coder: aDecoder)
   }
 
   //--------------------
-  // MARK: - Mask
+  // MARK: - Picture Mask
 
-  @IBInspectable var mask: String {
+  @IBInspectable var pictureMask: String {
   //----------------------------------------------------------------------------
     get { return nbPictureMask.getMask() }
     set {
@@ -107,17 +107,17 @@ class NBPictureMaskField: UITextField {
   // directly (typically during initialization).
 
     didSet {
-      guard !isEditing else { return }
+      guard !isEditingText else { return }
 
       let checkResult = nbPictureMask.check(text ?? "")
 
       // User does not have a choice at this point in time
-      validate?(sender: self, text: checkResult.text, status: checkResult.status)
-      changed?(sender: self, text: checkResult.text, status: checkResult.status)
+      _ = validate?(self, checkResult.text, checkResult.status)
+      changed?(self, checkResult.text, checkResult.status)
     }
   }
 
-  func check(text: String) -> NBPictureMask.CheckResult {
+  func check(_ text: String) -> NBPictureMask.CheckResult {
   //----------------------------------------------------------------------------
     return nbPictureMask.check(text)
   }
@@ -125,11 +125,11 @@ class NBPictureMaskField: UITextField {
   //--------------------
   // MARK: - Draw
 
-  override func drawRect(rect: CGRect) {
+  override func draw(_ rect: CGRect) {
   //----------------------------------------------------------------------------
   // This is used as a way to get an observer on "text".
 
-    super.drawRect(rect)
+    super.draw(rect)
 
     // This observer used on manual updating text property
     delegate = self
@@ -143,47 +143,47 @@ class NBPictureMaskField: UITextField {
 extension NBPictureMaskField: UITextFieldDelegate {
 //------------------------------------------------------------------------------
 
-  func textFieldDidBeginEditing(textField: UITextField) {
+  func textFieldDidBeginEditing(_ textField: UITextField) {
   //----------------------------------------------------------------------------
-    isEditing = true
+    isEditingText = true
   }
 
-  func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+  func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
   //----------------------------------------------------------------------------
 
     // Save positions
     let beginning = textField.beginningOfDocument
-    let start = textField.positionFromPosition(beginning, offset:range.location)
+    let start = textField.position(from: beginning, offset:range.location)
     //let end = textField.positionFromPosition(start!, offset:range.length)
     //let textRange = textField.textRangeFromPosition(start!, toPosition:end!)
-    var cursorOffset = textField.offsetFromPosition(beginning, toPosition:start!) + string.characters.count
+    var cursorOffset = textField.offset(from: beginning, to:start!) + string.characters.count
 
     let checkResult = nbPictureMask.check(textField.text ?? "", shouldChangeCharactersInRange: range, replacementString: string)
 
     // User may disallow changes
     if let validate = validate {
-      if !validate(sender: self, text: checkResult.text, status: checkResult.status) { return false }
+      if !validate(self, checkResult.text, checkResult.status) { return false }
     }
 
-    // Check if mask is enforced
+    // Check if picture mask is enforced
     if enforceMask {
-      if checkResult.status == .NotOk { return false }
+      if checkResult.status == .notOk { return false }
     }
 
     // Update text field
     textField.text = checkResult.text
     cursorOffset += checkResult.autoFillOffset
-    let newCursorPosition = textField.positionFromPosition(textField.beginningOfDocument, offset:cursorOffset)
-    let newSelectedRange = textField.textRangeFromPosition(newCursorPosition!, toPosition:newCursorPosition!)
+    let newCursorPosition = textField.position(from: textField.beginningOfDocument, offset:cursorOffset)
+    let newSelectedRange = textField.textRange(from: newCursorPosition!, to:newCursorPosition!)
     textField.selectedTextRange = newSelectedRange
 
-    changed?(sender: self, text: checkResult.text, status: checkResult.status)
+    changed?(self, checkResult.text, checkResult.status)
     return false
   }
 
-  func textFieldDidEndEditing(textField: UITextField) {
+  func textFieldDidEndEditing(_ textField: UITextField) {
   //----------------------------------------------------------------------------
-    isEditing = false
+    isEditingText = false
   }
 
 }

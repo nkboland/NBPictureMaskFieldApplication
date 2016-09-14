@@ -90,9 +90,9 @@ class NBPictureMask {
   //--------------------
   // These are the different outcomes that may result when checking text.
     case
-      NotOk,                                  // The check has failed
-      OkSoFar,                                // The check is ok so far
-      Ok                                      // The check is ok
+      notOk,                                  // The check has failed
+      okSoFar,                                // The check is ok so far
+      ok                                      // The check is ok
   }
 
   typealias CheckResult = (status: Status, text: String, errMsg: String?, autoFillOffset: Int)
@@ -103,7 +103,7 @@ class NBPictureMask {
   //--------------------
   // MARK: - Constants
 
-  private struct kMask {
+  fileprivate struct kMask {
     static let digit          : Character = "#"
     static let letter         : Character = "?"
     static let letterToUpper  : Character = "&"
@@ -122,54 +122,54 @@ class NBPictureMask {
   //--------------------
   // MARK: - Types
 
-  private enum NodeType {
+  fileprivate enum NodeType {
   //--------------------
   // A node must be one of these types.
 
     case
-      Root,                                   //     Root node
-      Digit,                                  //  #  Any digit 0..9
-      Letter,                                 //  ?  Any letter a..z or A..Z
-      LetterToUpper,                          //  &  Any letter a..z or A..Z converted to uppercase
-      LetterToLower,                          //  ~  Any letter a..z or A..Z converted to lowercase
-      AnyChar,                                //  @  Any character
-      AnyCharToUpper,                         //  !  Any character converted to uppercase
-      Literal,                                //  ;  Literal character
-      Repeat,                                 //  *  Repeat any number of times - Example: *& or *3#
-      Optional,                               //  [  Optional sequence of characters - Example: [abc]
-      OptionalEnd,                            //  ]  Optional end
-      Grouping,                               //  {  Grouping - Example: {R,G,B} or {R[ed],G[reen],B[lue]}
-      GroupingEnd,                            //  }  Grouping end
-      Group                                   //  ,  Group - Example: {Group1,Group2}
+      root,                                   //     Root node
+      digit,                                  //  #  Any digit 0..9
+      letter,                                 //  ?  Any letter a..z or A..Z
+      letterToUpper,                          //  &  Any letter a..z or A..Z converted to uppercase
+      letterToLower,                          //  ~  Any letter a..z or A..Z converted to lowercase
+      anyChar,                                //  @  Any character
+      anyCharToUpper,                         //  !  Any character converted to uppercase
+      literal,                                //  ;  Literal character
+      repetition,                             //  *  Repeat any number of times - Example: *& or *3#
+      optional,                               //  [  Optional sequence of characters - Example: [abc]
+      optionalEnd,                            //  ]  Optional end
+      grouping,                               //  {  Grouping - Example: {R,G,B} or {R[ed],G[reen],B[lue]}
+      groupingEnd,                            //  }  Grouping end
+      group                                   //  ,  Group - Example: {Group1,Group2}
   }
 
-  private struct Node {
+  fileprivate struct Node {
   //--------------------
 
-    var type    : NodeType = .Root            // Node type indicates how it should be handled
+    var type    : NodeType = .root            // Node type indicates how it should be handled
     var value   : Int = 0                     // Repeat (count)
     var literal : Character = " "             // Literal character
     var str     : String = ""                 // Mask represented by this node used for debugging
     var nodes   : [Node] = [Node]()           // Child nodes (branches)
    }
 
-  private typealias ChkRslt = (index: Int, status: Status, errMsg: String?)
+  fileprivate typealias ChkRslt = (index: Int, status: Status, errMsg: String?)
 
   //--------------------
   // MARK: - Variables
 
-  private var mask = [Character]()            // Input mask
-  private var text = [Character]()            // Input text
+  fileprivate var mask = [Character]()        // Input mask
+  fileprivate var text = [Character]()        // Input text
 
-  private var rootNode = Node()               // Mask root node
-  private var newtext = [Character]()         // Text with mask changes applied
+  fileprivate var rootNode = Node()           // Mask root node
+  fileprivate var newtext = [Character]()     // Text with mask changes applied
 
-  private var autoFill = false                // Text is automatically filled with literals
+  fileprivate var autoFill = false            // Text is automatically filled with literals
 
   //--------------------
   // MARK: - Helper Methods
 
-  class func isDigit( c : Character ) -> Bool {
+  class func isDigit( _ c : Character ) -> Bool {
   //----------------------------------------------------------------------------
   // Returns true if characer is 0..9 otherwise false.
 
@@ -179,7 +179,7 @@ class NBPictureMask {
     }
   }
 
-  class func isLetter( c : Character ) -> Bool {
+  class func isLetter( _ c : Character ) -> Bool {
   //----------------------------------------------------------------------------
   // Returns true if characer is A..Z, a..z otherwise false.
 
@@ -190,7 +190,7 @@ class NBPictureMask {
     }
   }
 
-  class func isUpper( c : Character ) -> Bool {
+  class func isUpper( _ c : Character ) -> Bool {
   //----------------------------------------------------------------------------
   // Returns true if characer is A..Z, a..z otherwise false.
 
@@ -200,7 +200,7 @@ class NBPictureMask {
     }
   }
 
-  class func toUpper( c : Character ) -> Character {
+  class func toUpper( _ c : Character ) -> Character {
   //----------------------------------------------------------------------------
   // Returns true if characer is a..z otherwise false.
 
@@ -235,7 +235,7 @@ class NBPictureMask {
     }
   }
 
-  class func toLower( c : Character ) -> Character {
+  class func toLower( _ c : Character ) -> Character {
   //----------------------------------------------------------------------------
   // Returns true if characer is a..z otherwise false.
 
@@ -270,7 +270,7 @@ class NBPictureMask {
     }
   }
 
-  class func isLower( c : Character ) -> Bool {
+  class func isLower( _ c : Character ) -> Bool {
   //----------------------------------------------------------------------------
   // Returns true if characer is a..z otherwise false.
 
@@ -280,10 +280,10 @@ class NBPictureMask {
     }
   }
 
-  class func lastDot( s : String ) -> String {
+  class func lastDot( _ s : String ) -> String {
   //----------------------------------------------------------------------------
   // Returns last element of a string separated by dots (period).
-    return s.componentsSeparatedByString(".").last ?? "unknown"
+    return s.components(separatedBy: ".").last ?? "unknown"
   }
 
   func getMask() -> String {
@@ -291,7 +291,7 @@ class NBPictureMask {
     return String(mask)
   }
 
-  func setMask(mask: String) -> MaskResult {
+  func setMask(_ mask: String) -> MaskResult {
   //----------------------------------------------------------------------------
     rootNode = Node()
     self.mask = Array(mask.characters)
@@ -303,12 +303,12 @@ class NBPictureMask {
     return self.autoFill
   }
 
-  func setAutoFill(autoFill: Bool) {
+  func setAutoFill(_ autoFill: Bool) {
   //----------------------------------------------------------------------------
     self.autoFill = autoFill
   }
 
-  private func parseMask(inout node: Node) -> MaskResult {
+  fileprivate func parseMask(_ node: inout Node) -> MaskResult {
   //----------------------------------------------------------------------------
   // Parse the mask and create the tree root.
 
@@ -322,7 +322,7 @@ class NBPictureMask {
     return (0, nil)
   }
 
-  private func parseMask(index: Int, inout node: Node) -> MaskResult {
+  fileprivate func parseMask(_ index: Int, node: inout Node) -> MaskResult {
   //----------------------------------------------------------------------------
   // This parses the current picture mask.
   //
@@ -365,24 +365,24 @@ class NBPictureMask {
       }
       c = mask[i]
       n.str.append(c)
-      t = .Literal
+      t = .literal
 
     } else {
 
       switch c {
-      case kMask.digit          : t = .Digit
-      case kMask.letter         : t = .Letter
-      case kMask.letterToUpper  : t = .LetterToUpper
-      case kMask.letterToLower  : t = .LetterToLower
-      case kMask.anyChar        : t = .AnyChar
-      case kMask.anyCharToUpper : t = .AnyCharToUpper
-      case kMask.repetition     : t = .Repeat
-      case kMask.optional       : t = .Optional
-      case kMask.optionalEnd    : t = .OptionalEnd
-      case kMask.grouping       : t = .Grouping
-      case kMask.groupingEnd    : t = .GroupingEnd
-      case kMask.group          : t = .Group
-      default                   : t = .Literal
+      case kMask.digit          : t = .digit
+      case kMask.letter         : t = .letter
+      case kMask.letterToUpper  : t = .letterToUpper
+      case kMask.letterToLower  : t = .letterToLower
+      case kMask.anyChar        : t = .anyChar
+      case kMask.anyCharToUpper : t = .anyCharToUpper
+      case kMask.repetition     : t = .repetition
+      case kMask.optional       : t = .optional
+      case kMask.optionalEnd    : t = .optionalEnd
+      case kMask.grouping       : t = .grouping
+      case kMask.groupingEnd    : t = .groupingEnd
+      case kMask.group          : t = .group
+      default                   : t = .literal
       }
 
     }
@@ -393,12 +393,12 @@ class NBPictureMask {
 
     //--------------------
 
-    case .Digit,
-         .Letter,
-         .LetterToUpper,
-         .LetterToLower,
-         .AnyChar,
-         .AnyCharToUpper :
+    case .digit,
+         .letter,
+         .letterToUpper,
+         .letterToLower,
+         .anyChar,
+         .anyCharToUpper :
 
       n.type = t
       n.literal = c
@@ -407,23 +407,23 @@ class NBPictureMask {
 
     //--------------------
 
-    case .Literal :
+    case .literal :
 
-      n.type = .Literal
+      n.type = .literal
       n.literal = c
       node.nodes.append(n)
       return (i+1, nil)
 
     //--------------------
 
-    case .Root :
+    case .root :
 
       return (i+1, nil)       // Should never happen
 
     //--------------------
     // Repeat *# or *2# or *2[#]
 
-    case .Repeat :
+    case .repetition :
 
       var numStr = ""
 
@@ -450,7 +450,7 @@ class NBPictureMask {
 
       guard retVal.errMsg == nil else { return(retVal) }
 
-      n.type = .Repeat
+      n.type = .repetition
       n.literal = "*"
       n.value = Int( numStr ) ?? 0
       node.nodes.append(n)
@@ -459,9 +459,9 @@ class NBPictureMask {
     //--------------------
     // Grouping {} or {#} or {#,?} or {R,G,B}
 
-    case .Grouping :
+    case .grouping :
 
-      n.type = .Grouping
+      n.type = .grouping
       n.literal = kMask.grouping
 
       let i1 = i
@@ -476,7 +476,7 @@ class NBPictureMask {
 
         repeat {
 
-          g.type = .Group
+          g.type = .group
           g.literal = kMask.group
 
           let retVal = parseMask(i, node: &g)
@@ -506,9 +506,9 @@ class NBPictureMask {
     //--------------------
     // Optional [] or [#] or [#,?] or [R,G,B]
 
-    case .Optional :
+    case .optional :
 
-      n.type = .Optional
+      n.type = .optional
       n.literal = kMask.optional
 
       let i1 = i
@@ -523,7 +523,7 @@ class NBPictureMask {
 
         repeat {
 
-          g.type = .Group
+          g.type = .group
           g.literal = kMask.group
 
           let retVal = parseMask(i, node: &g)
@@ -553,21 +553,21 @@ class NBPictureMask {
     //--------------------
     // Group with no body {} or {#,}
 
-    case .GroupingEnd :
+    case .groupingEnd :
 
       return (i, "Grouping is missing '\(kMask.grouping)'")
 
     //--------------------
     // Group with no body {,#} or [,#]
 
-    case .Group :
+    case .group :
 
       return (i, "Group '\(kMask.group)' is incomplete")
 
     //--------------------
     // Optional with no body [] or [#,]
 
-    case .OptionalEnd :
+    case .optionalEnd :
 
       return (i, "Optional is missing '\(kMask.optional)'")
     }
@@ -586,10 +586,10 @@ class NBPictureMask {
     NBPictureMask.printMaskTree(&lines, index: 0, node: rootNode)
     lines.append("-- END --")
 
-    return lines.joinWithSeparator("\n")
+    return lines.joined(separator: "\n")
   }
 
-  private class func printMaskTree(inout lines: [String], index: Int, node: Node) {
+  fileprivate class func printMaskTree(_ lines: inout [String], index: Int, node: Node) {
   //----------------------------------------------------------------------------
   // Prints the mask tree structure for debugging purposes.
 
@@ -598,31 +598,31 @@ class NBPictureMask {
 
     for n in node.nodes {
       switch n.type {
-      case .Digit,
-           .Letter,
-           .LetterToUpper,
-           .LetterToLower,
-           .AnyChar,
-           .AnyCharToUpper,
-           .Literal :
-        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
-      case .Root :
+      case .digit,
+           .letter,
+           .letterToUpper,
+           .letterToLower,
+           .anyChar,
+           .anyCharToUpper,
+           .literal :
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(describing: n.type))) '\(n.str)'")
+      case .root :
         break
-      case .Repeat :
-        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
+      case .repetition :
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(describing: n.type))) '\(n.str)'")
         printMaskTree(&lines, index: index+1, node: n)
-      case .Grouping,
-           .GroupingEnd,
-           .Optional,
-           .OptionalEnd,
-           .Group :
-        lines.append("\(pad)\(NBPictureMask.lastDot(String(n.type))) '\(n.str)'")
+      case .grouping,
+           .groupingEnd,
+           .optional,
+           .optionalEnd,
+           .group :
+        lines.append("\(pad)\(NBPictureMask.lastDot(String(describing: n.type))) '\(n.str)'")
         printMaskTree(&lines, index: index+1, node: n)
       }
     }
   }
 
-  private func check(index: Int, node: Node, inout fillFlag: Bool) -> ChkRslt {
+  fileprivate func check(_ index: Int, node: Node, fillFlag: inout Bool) -> ChkRslt {
   //----------------------------------------------------------------------------
   // This checks the current text against the current mask (tree).
   //
@@ -651,98 +651,98 @@ class NBPictureMask {
 
     //--------------------
 
-    case .Digit :
+    case .digit :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       if NBPictureMask.isDigit( text[i] ) {
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       } else {
-        return(i, .NotOk, "Not a digit")
+        return(i, .notOk, "Not a digit")
       }
 
     //--------------------
 
-    case .Letter :
+    case .letter :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       if NBPictureMask.isLetter( text[i] ) {
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       } else {
-        return(i, .NotOk, "Not a letter")
+        return(i, .notOk, "Not a letter")
       }
 
     //--------------------
 
-    case .LetterToUpper :
+    case .letterToUpper :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       if NBPictureMask.isLetter( text[i] ) {
         newtext[i] = NBPictureMask.toUpper(text[i])
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       } else {
-        return(i, .NotOk, "Not a letter")
+        return(i, .notOk, "Not a letter")
       }
 
     //--------------------
 
-    case .LetterToLower :
+    case .letterToLower :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       if NBPictureMask.isLetter( text[i] ) {
         newtext[i] = NBPictureMask.toLower(text[i])
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       } else {
-        return(i, .NotOk, "Not a letter")
+        return(i, .notOk, "Not a letter")
       }
 
     //--------------------
 
-    case .AnyChar :
+    case .anyChar :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
-      return(i+1, .Ok, nil)
+      return(i+1, .ok, nil)
 
     //--------------------
 
-    case .AnyCharToUpper :
+    case .anyCharToUpper :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       newtext[i] = NBPictureMask.toUpper(text[i])
-      return(i+1, .Ok, nil)
+      return(i+1, .ok, nil)
 
     //--------------------
 
-    case .Literal :
+    case .literal :
 
       // No more input
       if i == text.count {
@@ -754,46 +754,46 @@ class NBPictureMask {
 
       // No more input (for real this time)
       if i == text.count {
-        return(i, .OkSoFar, nil)
+        return(i, .okSoFar, nil)
       }
 
       // Space matches all literal characters
       if text[i] == " " {
         newtext[i] = node.literal
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       // Ignore case during the comparison
       } else if NBPictureMask.toUpper(text[i]) == NBPictureMask.toUpper(node.literal) {
         // Literal letters are automatically converted to the case presented in the mask
         if NBPictureMask.isLetter(text[i]) { newtext[i] = node.literal }
-        return(i+1, .Ok, nil)
+        return(i+1, .ok, nil)
       } else {
-        return(i, .NotOk, "Not ok")
+        return(i, .notOk, "Not ok")
       }
 
     //--------------------
     // Root node
     // Example: # or ## or #[#] or {#,&}
 
-    case .Root :
+    case .root :
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         i = retVal.index
         switch retVal.status {
-        case .Ok :          break;            // Continue while everything is ok
-        case .OkSoFar :     return retVal     // No more text
-        case .NotOk :       return retVal     // Problem
+        case .ok :          break;            // Continue while everything is ok
+        case .okSoFar :     return retVal     // No more text
+        case .notOk :       return retVal     // Problem
         }
       }
 
       // No more mask
-      if i == text.count  { return(i, .Ok, nil) }           // Mask and text match
-      else                { return(i, .NotOk, "Not ok") }   // More text than mask
+      if i == text.count  { return(i, .ok, nil) }           // Mask and text match
+      else                { return(i, .notOk, "Not ok") }   // More text than mask
 
     //--------------------
     // Repeat *# or *2# or *2[#]
 
-    case .Repeat :
+    case .repetition :
 
       var loopCount = node.value
 
@@ -806,17 +806,17 @@ class NBPictureMask {
         // No more input
         if i == text.count {
           fillFlag = false
-          if loopOptional { return(i, .Ok, nil) }   // Repeat Oked to the end of the input OR no count specified
-          else            { return(i, .OkSoFar, nil) }
+          if loopOptional { return(i, .ok, nil) }   // Repeat Oked to the end of the input OR no count specified
+          else            { return(i, .okSoFar, nil) }
         }
 
         for n in 0 ..< node.nodes.count {
           let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
           i = retVal.index
           switch retVal.status {
-          case .Ok :        break;                  // Continue while everything is ok
-          case .OkSoFar :   return retVal           // No more text
-          case .NotOk :     if loopOptional {       // No count specified so it doesn't have to match
+          case .ok :        break;                  // Continue while everything is ok
+          case .okSoFar :   return retVal           // No more text
+          case .notOk :     if loopOptional {       // No count specified so it doesn't have to match
                               break
                             }
                             return retVal           // Otherwise problem
@@ -827,7 +827,7 @@ class NBPictureMask {
 
         // Repeat did not advance and this can only happen if everything was optional
         if i == startIndex {
-          return(i, .Ok, nil)
+          return(i, .ok, nil)
         }
 
         if loopOptional { continue }                // Special case repeats until end of text
@@ -837,14 +837,14 @@ class NBPictureMask {
 
       // No more loops
 
-      return(i, .Ok, nil)                           // Mask and text up to this point match
+      return(i, .ok, nil)                           // Mask and text up to this point match
 
     //--------------------
     // Grouping {} or {#} or {#,?} or {R,G,B}
     // Check all groupings from the same text positon.
     // The first Ok wins.
 
-    case .Grouping :
+    case .grouping :
 
       // No more input
       if i == text.count {
@@ -854,75 +854,75 @@ class NBPictureMask {
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         switch retVal.status {
-        case .Ok :          return retVal           // Match first ok group
-        case .OkSoFar :     return retVal           // Match first ok so far group
-        case .NotOk :       break                   // Try next group
+        case .ok :          return retVal           // Match first ok group
+        case .okSoFar :     return retVal           // Match first ok so far group
+        case .notOk :       break                   // Try next group
         }
       }
 
       // No more mask
-      return(i, .NotOk, "Not ok")                   // More text than mask
+      return(i, .notOk, "Not ok")                   // More text than mask
 
     //--------------------
 
-    case .GroupingEnd :
+    case .groupingEnd :
 
-      return( i, .NotOk, "Should never occur")
+      return( i, .notOk, "Should never occur")
 
     //--------------------
     // Group inside grouping or optional
     // Example: # or ## or A#
 
-    case .Group :
+    case .group :
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         i = retVal.index
         switch retVal.status {
-        case .Ok :          break;            // Continue while everything is ok
-        case .OkSoFar :     return retVal     // No more text
-        case .NotOk :       return retVal     // Problem
+        case .ok :          break;            // Continue while everything is ok
+        case .okSoFar :     return retVal     // No more text
+        case .notOk :       return retVal     // Problem
         }
       }
 
       // No more mask
-      return(i, .Ok, nil)                     // Mask and text up to this point match
+      return(i, .ok, nil)                     // Mask and text up to this point match
 
     //--------------------
     // Optional [] or [#] or [#,?] or [R,G,B]
     // Return on the first ok
 
-    case .Optional :
+    case .optional :
 
       // No more input
       if i == text.count {
         fillFlag = false
-        return(i, .Ok, nil)                   // Optional not needed if no text
+        return(i, .ok, nil)                   // Optional not needed if no text
       }
 
       for n in 0 ..< node.nodes.count {
         let retVal = check(i, node: node.nodes[n], fillFlag: &fillFlag)
         switch retVal.status {
-        case .Ok :          return retVal           // Match first ok group
-        case .OkSoFar :     return retVal           // Match first ok so far group
-        case .NotOk :       break                   // Try next group
+        case .ok :          return retVal           // Match first ok group
+        case .okSoFar :     return retVal           // Match first ok so far group
+        case .notOk :       break                   // Try next group
         }
       }
 
       // No more mask
-      return(i, .Ok, nil)                           // Does not have to match
+      return(i, .ok, nil)                           // Does not have to match
 
     //--------------------
 
-    case .OptionalEnd :
+    case .optionalEnd :
 
-      return(i, .NotOk, "Should never occur")
+      return(i, .notOk, "Should never occur")
 
     }
 
   }
 
-  func check(text: String) -> CheckResult {
+  func check(_ text: String) -> CheckResult {
   //----------------------------------------------------------------------------
   // Check the text against the mask.
   //
@@ -938,19 +938,19 @@ class NBPictureMask {
     return (rslt.status, String(self.newtext), rslt.errMsg, 0)
   }
 
-  func check(text: String, mask: String) -> CheckResult {
+  func check(_ text: String, mask: String) -> CheckResult {
   //----------------------------------------------------------------------------
   // Check the text against the mask.
 
-    self.setMask(mask)
+    _ = self.setMask(mask)
     return check(text)
   }
 
-  func check(text: String, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> CheckResult {
+  func check(_ text: String, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> CheckResult {
   //----------------------------------------------------------------------------
   // Check the text against the mask.
 
-    let prospectiveText = (text as NSString).stringByReplacingCharactersInRange(range, withString: string)
+    let prospectiveText = (text as NSString).replacingCharacters(in: range, with: string)
 
     let isAppending: Bool
 

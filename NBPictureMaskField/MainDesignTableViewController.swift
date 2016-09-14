@@ -49,42 +49,42 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     // Dispose of any resources that can be recreated.
   }
 
-  override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+  override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
   //----------------------------------------------------------------------------
     return UITableViewAutomaticDimension
   }
 
-  func loadDefaults(sender: AnyObject) {
+  func loadDefaults(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
-    let defaults = NSUserDefaults.standardUserDefaults()
-    maskTextField.text = defaults.stringForKey("maskTextField")
-    autoFillSwitch.on = defaults.boolForKey("autoFillSwitch")
-    enforceMaskSwitch.on = defaults.boolForKey("enforceMaskSwitch")
+    let defaults = UserDefaults.standard
+    maskTextField.text = defaults.string(forKey: "maskTextField")
+    autoFillSwitch.isOn = defaults.bool(forKey: "autoFillSwitch")
+    enforceMaskSwitch.isOn = defaults.bool(forKey: "enforceMaskSwitch")
 
-    inputTextField.mask = maskTextField.text ?? ""
-    inputTextField.autoFill = autoFillSwitch.on
-    inputTextField.enforceMask = enforceMaskSwitch.on
+    inputTextField.pictureMask = maskTextField.text ?? ""
+    inputTextField.autoFill = autoFillSwitch.isOn
+    inputTextField.enforceMask = enforceMaskSwitch.isOn
 
-    inputTextField.text = defaults.stringForKey("inputTextField")
+    inputTextField.text = defaults.string(forKey: "inputTextField")
   }
 
-  func saveDefaults(sender: AnyObject) {
+  func saveDefaults(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
-    let defaults = NSUserDefaults.standardUserDefaults()
-    defaults.setObject(maskTextField.text, forKey: "maskTextField")
-    defaults.setBool(autoFillSwitch.on, forKey: "autoFillSwitch")
-    defaults.setBool(enforceMaskSwitch.on, forKey: "enforceMaskSwitch")
-    defaults.setObject(inputTextField.text, forKey: "inputTextField")
+    let defaults = UserDefaults.standard
+    defaults.set(maskTextField.text, forKey: "maskTextField")
+    defaults.set(autoFillSwitch.isOn, forKey: "autoFillSwitch")
+    defaults.set(enforceMaskSwitch.isOn, forKey: "enforceMaskSwitch")
+    defaults.set(inputTextField.text, forKey: "inputTextField")
   }
 
-  @IBAction func switchValueChanged(sender: AnyObject) {
+  @IBAction func switchValueChanged(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
-    inputTextField.autoFill = autoFillSwitch.on
-    inputTextField.enforceMask = enforceMaskSwitch.on
+    inputTextField.autoFill = autoFillSwitch.isOn
+    inputTextField.enforceMask = enforceMaskSwitch.isOn
     saveDefaults(sender)
   }
 
-  @IBAction func maskButtonAction(sender: AnyObject) {
+  @IBAction func maskButtonAction(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
     let button = sender as! UIButton
     inputTextField.text = ""
@@ -93,14 +93,14 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
   }
 
 
-  @IBAction func maskFieldEditingChanged(sender: AnyObject) {
+  @IBAction func maskFieldEditingChanged(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
   // Update things when the mask changes.
 
     let textField = sender as! UITextField
     let mask = textField.text ?? ""
 
-    inputTextField.mask = mask
+    inputTextField.pictureMask = mask
     let errMsg = inputTextField.maskErrMsg
 
     maskStatusLabel.text = errMsg ?? "Mask ok"
@@ -111,17 +111,17 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     saveDefaults(sender)
   }
 
-  func inputTextFieldChanged(sender: AnyObject, text: String, status: NBPictureMask.Status) {
+  func inputTextFieldChanged(_ sender: AnyObject, text: String, status: NBPictureMask.Status) {
   //----------------------------------------------------------------------------
   // Update things when the text changes.
 
     // Highlight the edit field background color
     if let textField = sender as? UITextField {
       switch (text, status) {
-      case ("",    _):    textField.backgroundColor = UIColor.clearColor()
-      case (_, .Ok):      textField.backgroundColor = UIColor.clearColor()
-      case (_, .OkSoFar): textField.backgroundColor = UIColor.yellowColor()
-      case (_, .NotOk):   textField.backgroundColor = UIColor.redColor()
+      case ("",    _):    textField.backgroundColor = UIColor.clear
+      case (_, .ok):      textField.backgroundColor = UIColor.clear
+      case (_, .okSoFar): textField.backgroundColor = UIColor.yellow
+      case (_, .notOk):   textField.backgroundColor = UIColor.red
       }
     }
 
@@ -130,9 +130,9 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
       let checkVal = pictureMaskField.check(text)
       switch (text, status) {
       case ("",    _):    inputStatusLabel.text = "No input"
-      case (_, .Ok):      inputStatusLabel.text = "Ok"
-      case (_, .OkSoFar): inputStatusLabel.text = "Ok so far"
-      case (_, .NotOk):   inputStatusLabel.text = "Error: \(checkVal.errMsg ?? "")"
+      case (_, .ok):      inputStatusLabel.text = "Ok"
+      case (_, .okSoFar): inputStatusLabel.text = "Ok so far"
+      case (_, .notOk):   inputStatusLabel.text = "Error: \(checkVal.errMsg ?? "")"
       }
     }
 
@@ -144,7 +144,7 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     view.endEditing(true)
   }
 
-  func textFieldShouldReturn(textField: UITextField) -> Bool {
+  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
   //----------------------------------------------------------------------------
     dismissKeyboard()
     return false
