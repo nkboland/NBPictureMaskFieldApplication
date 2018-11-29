@@ -3,7 +3,7 @@
 This is an application that demonstrates how to use the `NBPictureMaskField` class.
 
 <a href="https://github.com/nkboland/NBPictureMaskField">
-<img src="https://github.com/nkboland/blobs/blob/master/nbpicturemaskfield/gifs/screen1.gif" width="400" height="300" /></a>
+<img src="https://github.com/nkboland/blobs/blob/master/nbpicturemaskfield/gifs/screen1.gif" height="300" /></a>
 <br><br/>
 
 ## Installation
