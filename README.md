@@ -24,6 +24,8 @@ Install the `NBPictureMaskField` software into a folder called `Packages` undern
 
 https://github.com/nkboland/NBPictureMaskField
 
+#### Folder Structure
+
 The folder structure should look like this when correctly installed.
 
     NBPictureMaskApplication       # Folder for NBPictureMaskFieldApplication
