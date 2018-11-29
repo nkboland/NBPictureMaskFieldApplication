@@ -24,18 +24,21 @@ Install the `NBPictureMaskField` software into a folder called `Packages` undern
 
 https://github.com/nkboland/NBPictureMaskField
 
-    NBPictureMaskApplication
+The folder structure should look like this when correctly installed.
+
+    NBPictureMaskApplication       # Folder for NBPictureMaskFieldApplication
     ├── LICENSE.txt
     ├── README.md
     ├── NBPictureMaskApplication.xcodeproj
-    ├── NBPictureMaskApplication
-    │   └── ...                    # Bulk of this application
+    ├── NBPictureMaskApplication   # Folder with NBPictureMaskFieldApplication source code
+    │   └── ...
     └── Packages
-        └── NBPictureMaskField     # Where component should be copied
+        └── NBPictureMaskField     # Folder with NBPictureMaskField source code
             └── Sources
             └── Tests
             ...
 
 ## License
+
 NBPictureMaskFieldApplication is available under the MIT license.
 See the LICENSE.txt file for more info.
