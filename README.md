@@ -6,6 +6,10 @@ This is an application that demonstrates how to use the `NBPictureMaskField` cla
 <img src="https://github.com/nkboland/blobs/blob/master/nbpicturemaskfield/gifs/screen1.gif" height="300" /></a>
 <br><br/>
 
+<a href="https://github.com/nkboland/NBPictureMaskField">
+<img src="https://github.com/nkboland/blobs/blob/master/nbpicturemaskfield/gifs/screen2.gif" height="300" /></a>
+<br><br/>
+
 ## Installation
 
 #### Download Software
