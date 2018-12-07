@@ -106,9 +106,11 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     maskStatusLabel.text = errMsg ?? "Mask ok"
     maskTreeLabel.text = inputTextField.maskTreeToString
 
-    tableView.reloadData()
-
     saveDefaults(sender)
+
+    inputTextField.text = inputTextField.text   // Force change so callbacks are invoked
+    //tableView.reloadData()  // Causes the keyboard to be dismissed
+
   }
 
   func inputTextFieldChanged(_ sender: AnyObject, text: String, status: NBPictureMask.Status) {
