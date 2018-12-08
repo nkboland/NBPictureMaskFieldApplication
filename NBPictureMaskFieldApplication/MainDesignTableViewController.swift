@@ -92,7 +92,6 @@ class MainDesignTableViewController: UITableViewController, UITextFieldDelegate 
     maskFieldEditingChanged(maskTextField)
   }
 
-
   @IBAction func maskFieldEditingChanged(_ sender: AnyObject) {
   //----------------------------------------------------------------------------
   // Update things when the mask changes.

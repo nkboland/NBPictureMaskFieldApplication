@@ -89,8 +89,8 @@
 			children = (
 				013161CB21AE37640090C4F0 /* AppDelegate.swift */,
 				013161CF21AE37640090C4F0 /* Main.storyboard */,
-				013161DD21AE37D30090C4F0 /* MainDesignTableViewController.swift */,
 				013161DE21AE37D30090C4F0 /* MainTableViewController.swift */,
+				013161DD21AE37D30090C4F0 /* MainDesignTableViewController.swift */,
 				013161D221AE37650090C4F0 /* Assets.xcassets */,
 				013161D421AE37650090C4F0 /* LaunchScreen.storyboard */,
 				013161D721AE37650090C4F0 /* Info.plist */,
